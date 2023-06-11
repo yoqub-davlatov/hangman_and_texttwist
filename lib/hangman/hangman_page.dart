@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
 
 class HangmanPage extends StatelessWidget {
   const HangmanPage({super.key});
@@ -11,12 +10,13 @@ class HangmanPage extends StatelessWidget {
         title: const Text('Hangman'),
       ),
       body: Container(
-    decoration: const BoxDecoration(
-    image: DecorationImage(
-    image: AssetImage("assets/my_background_image.png"),
-    fit: BoxFit.cover,
-    ),
-    ),),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/my_background_image.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/hangman/hangman_page.dart';
-import 'package:hangman_and_texttwist/text_twist/text_twist_page.dart';
+import '../text_twist/text_twist_page.dart';
+import '../hangman/hangman_page.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);

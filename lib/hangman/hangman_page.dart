@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../hangman/UI/colors.dart';
-import '../hangman/UI/widget/figure_image.dart';
-import '../hangman/UI/widget/letter.dart';
-import '../hangman/utils/Game.dart';
+import './UI/colors.dart';
+import './UI/widget/figure_image.dart';
+import './UI/widget/letter.dart';
+import './utils/Game.dart';
 
 class HangmanPage extends StatefulWidget {
   const HangmanPage({super.key});

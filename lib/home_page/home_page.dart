@@ -65,8 +65,7 @@ class MyHomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const TextTwistPage()),
+                    MaterialPageRoute(builder: (context) => const TextTwist()),
                   );
                 },
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../text_twist/text_twist_page.dart';
-import '../hangman/hangman_page.dart';
+import 'package:hangman_and_texttwist/constants/constants.dart';
+import '../category_page/category.dart';
+import '../constants/games.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -26,7 +27,7 @@ class MyHomePage extends StatelessWidget {
                 child: Text(
                   "PICK YOUR GAME AND LET THE FUN BEGIN!",
                   style: TextStyle(
-                    fontFamily: 'KristenITC',
+                    fontFamily: Constants.fontFamily,
                     color: Colors.green,
                     fontSize: 35.0,
                   ),
@@ -39,7 +40,7 @@ class MyHomePage extends StatelessWidget {
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.blue,
                   textStyle:
-                      const TextStyle(fontSize: 30, fontFamily: "KristenITC"),
+                      const TextStyle(fontSize: 30, fontFamily: Constants.fontFamily),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 110, vertical: 20),
                 ),
@@ -47,7 +48,9 @@ class MyHomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HangmanPage()),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const CategoryPage(game: Games.hangman)),
                   );
                 },
               ),
@@ -57,7 +60,7 @@ class MyHomePage extends StatelessWidget {
                   foregroundColor: Colors.blue,
                   backgroundColor: Colors.white,
                   textStyle:
-                      const TextStyle(fontSize: 30, fontFamily: "KristenITC"),
+                      const TextStyle(fontSize: 30, fontFamily: Constants.fontFamily),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 110, vertical: 20),
                 ),
@@ -66,7 +69,8 @@ class MyHomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const TextTwistPage()),
+                        builder: (context) =>
+                            const CategoryPage(game: Games.wordtwist)),
                   );
                 },
               ),

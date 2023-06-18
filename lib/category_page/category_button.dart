@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants/constants.dart';
 
 OutlinedButton categoryButton(String name) {
   return OutlinedButton(
@@ -16,7 +17,7 @@ OutlinedButton categoryButton(String name) {
     child: Text(
       name,
       style: const TextStyle(
-        fontFamily: "KristenITC",
+        fontFamily: Constants.fontFamily,
         fontSize: 20,
         color: Colors.green,
       ),

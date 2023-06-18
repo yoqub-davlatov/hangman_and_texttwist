@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hangman_and_texttwist/constants/constants.dart';
 import './UI/colors.dart';
 import './UI/widget/figure_image.dart';
 import './UI/widget/letter.dart';
@@ -46,7 +47,7 @@ class _HangmanPageState extends State<HangmanPage> {
           "Hangman",
           style: TextStyle(
             color: Colors.white,
-            fontFamily: "KristenITC",
+            fontFamily: Constants.fontFamily,
             fontSize: 30,
           ),
         ),
@@ -144,7 +145,7 @@ class _HangmanPageState extends State<HangmanPage> {
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 30,
-                              fontFamily: 'KristenITC',
+                              fontFamily: Constants.fontFamily,
                               fontWeight: FontWeight.bold,
                             ),
                           ));
@@ -189,7 +190,6 @@ class _HangmanPageState extends State<HangmanPage> {
                 ),
               ),
             ),
-
         ],
       ),
     );

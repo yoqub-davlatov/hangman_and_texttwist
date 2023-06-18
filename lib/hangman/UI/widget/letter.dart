@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../constants/constants.dart';
 import '../colors.dart';
 
 Widget letter(String character, bool hidden) {
@@ -17,7 +18,7 @@ Widget letter(String character, bool hidden) {
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
-          fontFamily: 'KristenITC',
+          fontFamily: Constants.fontFamily,
           fontSize: 30.0,
         ),
       ),

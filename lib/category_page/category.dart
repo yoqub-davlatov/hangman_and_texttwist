@@ -16,6 +16,9 @@ class CategoryPage extends StatefulWidget {
 class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Container(
         alignment: Alignment.center,
@@ -34,19 +37,19 @@ class _CategoryPageState extends State<CategoryPage> {
               Column(
                 children: [
                   const SizedBox(
-                    height: 20,
+                    height: 65,
                   ),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(30),
                       border: Border.all(
-                        color: Colors.blue,
+                        color: const Color(0xff3E87FF),
                         width: 10,
                       ),
                     ),
-                    height: 600,
-                    width: 300,
+                    height: screenHeight * 0.8,
+                    width: screenWidth * 0.9,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -56,33 +59,60 @@ class _CategoryPageState extends State<CategoryPage> {
                         categoryButton("Astronomy"),
                         categoryButton("History"),
                         const Text(
-                          "Wanna use your own category?\nno problem",
+                          "Wanna use your own category?\nNo problem",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontFamily: Constants.fontFamily,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        SizedBox(
+                          width: screenWidth * 0.7,
+                          height: screenHeight * 0.06,
                           child: TextFormField(
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontFamily: Constants.fontFamily,
+                              color: Color(0xff42B462),
+                            ),
                             decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: const BorderSide(
+                                  color: Color(0xff3E87FF),
+                                  width: 3.0,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: const BorderSide(
+                                  color: Color(0xff3E87FF),
+                                  width: 3.0,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: const BorderSide(
+                                  color: Color(0xff3E87FF),
+                                  width: 3.0,
+                                ),
                               ),
                               hintText: "Enter your category",
                               hintStyle: const TextStyle(
+                                fontSize: 22,
                                 fontFamily: Constants.fontFamily,
-                                color: Colors.green,
+                                color: Color.fromRGBO(66, 180, 98, 0.5),
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(
-                    height: 30,
+                    height: 20,
                   ),
                   OutlinedButton(
                     onPressed: () {
@@ -95,13 +125,13 @@ class _CategoryPageState extends State<CategoryPage> {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.yellow,
-                      fixedSize: const Size(200, 40),
+                      backgroundColor: const Color(0xffFFFB00),
+                      fixedSize: Size(screenWidth * 0.7, screenHeight * 0.06),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       side: const BorderSide(
-                        color: Colors.blue,
+                        color: Color(0xff3E87FF),
                         width: 3,
                       ),
                     ),
@@ -109,29 +139,32 @@ class _CategoryPageState extends State<CategoryPage> {
                       "Continue",
                       style: TextStyle(
                         fontFamily: Constants.fontFamily,
-                        fontSize: 20,
+                        fontSize: 22,
                         color: Colors.black,
                       ),
                     ),
                   ),
                 ],
               ),
-              Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
+              Positioned(
+                top: screenHeight * 0.04,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(30),
+                    ),
+                    color: Color(0xff3E87FF),
                   ),
-                  color: Colors.blue,
-                ),
-                alignment: Alignment.center,
-                width: 200,
-                height: 50,
-                child: const Text(
-                  "Category",
-                  style: TextStyle(
-                    fontFamily: Constants.fontFamily,
-                    color: Colors.white,
-                    fontSize: 30,
+                  alignment: Alignment.center,
+                  width: screenWidth * 0.5,
+                  height: screenHeight * 0.07,
+                  child: const Text(
+                    "Category",
+                    style: TextStyle(
+                      fontFamily: Constants.fontFamily,
+                      color: Colors.white,
+                      fontSize: 26,
+                    ),
                   ),
                 ),
               ),

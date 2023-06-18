@@ -5,12 +5,12 @@ OutlinedButton categoryButton(String name) {
   return OutlinedButton(
     onPressed: () {},
     style: OutlinedButton.styleFrom(
-      fixedSize: const Size(200, 40),
+      fixedSize: const Size(251, 44),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(30),
       ),
       side: const BorderSide(
-        color: Colors.blue,
+        color: Color(0xff3E87FF),
         width: 3,
       ),
     ),
@@ -18,8 +18,8 @@ OutlinedButton categoryButton(String name) {
       name,
       style: const TextStyle(
         fontFamily: Constants.fontFamily,
-        fontSize: 20,
-        color: Colors.green,
+        fontSize: 22,
+        color: Color(0xff42B462),
       ),
     ),
   );

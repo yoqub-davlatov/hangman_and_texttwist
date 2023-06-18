@@ -44,7 +44,6 @@ class _HangmanPageState extends State<HangmanPage> {
     timer = Timer.periodic(const Duration(seconds: 1), (_) => addSecond());
   }
 
-
   bool isGameOver() {
     return Game.gameTries >= 6 || isWordGuessed() || duration.inSeconds == 0;
   }
@@ -140,6 +139,7 @@ class _HangmanPageState extends State<HangmanPage> {
             fontSize: 30,
           ),
         ),
+        backgroundColor: Colors.blue,
         centerTitle: true,
         elevation: 0,
       ),

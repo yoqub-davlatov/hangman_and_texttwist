@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/constants/constants.dart';
+import '../constants/constants.dart';
 import '../category_page/category.dart';
 import '../constants/games.dart';
 
@@ -71,6 +71,7 @@ class MyHomePage extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) =>
                             const CategoryPage(game: Games.wordtwist)),
+
                   );
                 },
               ),

@@ -172,7 +172,7 @@ class _HangmanPageState extends State<HangmanPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     TextButton(
                       onPressed: resetGame,
                       style: TextButton.styleFrom(

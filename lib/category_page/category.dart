@@ -91,7 +91,7 @@ class _CategoryPageState extends State<CategoryPage> {
                         MaterialPageRoute(
                             builder: (context) => widget.game == Games.hangman
                                 ? const HangmanPage()
-                                : const TextTwistPage()),
+                                : const TextTwist()),
                       );
                     },
                     style: OutlinedButton.styleFrom(

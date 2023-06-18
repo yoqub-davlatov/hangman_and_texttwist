@@ -14,7 +14,7 @@ class MyHomePage extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/my_background_image.png"),
+            image: AssetImage(Constants.bckgrImagePath),
             fit: BoxFit.cover,
           ),
         ),

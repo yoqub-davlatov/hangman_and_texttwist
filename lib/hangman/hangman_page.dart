@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/constants/constants.dart';
-import './UI/colors.dart';
+import '../constants/constants.dart';
 import './UI/widget/figure_image.dart';
 import './UI/widget/letter.dart';
 import './utils/Game.dart';
@@ -13,16 +14,53 @@ class HangmanPage extends StatefulWidget {
 }
 
 class _HangmanPageState extends State<HangmanPage> {
-  String word = 'Flutter'.toUpperCase();
+  Duration duration = const Duration(minutes: 1, seconds: 30);
+  Timer? timer;
+  String word = 'Codeforces'.toUpperCase();
   final List<String> alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').toList();
 
+  int points = 300;
+  int coins = 50;
+  int round = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  void startTimer() {
+    void addSecond() {
+      setState(() {
+        final seconds = duration.inSeconds - 1;
+        if (seconds < 0) {
+          timer?.cancel();
+          return;
+        }
+        duration = Duration(seconds: seconds);
+      });
+    }
+
+    timer = Timer.periodic(const Duration(seconds: 1), (_) => addSecond());
+  }
+
+
   bool isGameOver() {
-    return Game.gameTries >= 6 || isWordGuessed();
+    return Game.gameTries >= 6 || isWordGuessed() || duration.inSeconds == 0;
   }
 
   void resetGame() {
+    if (isWordGuessed()) {
+      round++;
+      points += (6 - Game.gameTries) * 100;
+      coins += 10;
+    } else {
+      round = 1;
+    }
+    duration = const Duration(minutes: 1, seconds: 30);
+    startTimer();
     setState(() {
-      word = 'Flutter'
+      word = 'Codeforces'
           .toUpperCase(); // replace this line with your word generating logic if you want different words each time
       Game.selectedChar = [];
       Game.gameTries = 0;
@@ -38,10 +76,61 @@ class _HangmanPageState extends State<HangmanPage> {
     return true;
   }
 
+  Widget showTimerWidget() {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return Text(
+      "$minutes:$seconds",
+      style: const TextStyle(
+        fontFamily: Constants.fontFamily,
+        fontSize: 30,
+      ),
+    );
+  }
+
+  Widget messageBar() {
+    timer?.cancel();
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: Colors.black.withOpacity(0.8),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              isWordGuessed() ? 'You Passed!' : 'You Lost!',
+              style: const TextStyle(
+                fontSize: 48,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 30),
+            TextButton(
+              onPressed: resetGame,
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.blue,
+              ),
+              child: Text(
+                isWordGuessed() ? 'Next Level' : 'Play Again',
+                style: const TextStyle(
+                  fontSize: 24,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryColor,
       appBar: AppBar(
         title: const Text(
           "Hangman",
@@ -53,7 +142,6 @@ class _HangmanPageState extends State<HangmanPage> {
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: AppColors.primaryColor,
       ),
       body: Stack(
         children: [
@@ -61,7 +149,7 @@ class _HangmanPageState extends State<HangmanPage> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                  "assets/images/my_background_image.png",
+                  Constants.bckgrImagePath,
                 ),
                 fit: BoxFit.fill,
               ),
@@ -70,6 +158,107 @@ class _HangmanPageState extends State<HangmanPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: 118,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue, width: 2),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber),
+                          Text(
+                            "$points",
+                            style: const TextStyle(
+                              fontFamily: Constants.fontFamily,
+                              fontSize: 24,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue, width: 2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            "$round",
+                            style: const TextStyle(
+                              fontFamily: Constants.fontFamily,
+                              fontSize: 26,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 118,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue, width: 2),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            "$coins",
+                            style: const TextStyle(
+                              fontFamily: Constants.fontFamily,
+                              fontSize: 24,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.diamond,
+                            color: Colors.red,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.lightbulb,
+                        color: Colors.yellow[600],
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.blue[400],
+                        fixedSize: const Size(45, 45),
+                      ),
+                    ),
+                    Container(
+                      child: showTimerWidget(),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.diamond,
+                        color: Colors.redAccent[700],
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.blue[400],
+                        fixedSize: const Size(45, 45),
+                      ),
+                    ),
+                  ],
+                ),
                 Center(
                   child: Stack(
                     children: [
@@ -90,9 +279,6 @@ class _HangmanPageState extends State<HangmanPage> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 12,
-                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Wrap(
@@ -106,14 +292,11 @@ class _HangmanPageState extends State<HangmanPage> {
                         .toList(),
                   ),
                 ),
-                const SizedBox(
-                  height: 12.0,
-                ),
                 SizedBox(
                   width: double.infinity,
-                  height: 250,
+                  height: 200,
                   child: GridView.count(
-                    crossAxisCount: 7,
+                    crossAxisCount: 8,
                     crossAxisSpacing: 8.0,
                     mainAxisSpacing: 8.0,
                     padding: const EdgeInsets.all(8.0),
@@ -144,7 +327,7 @@ class _HangmanPageState extends State<HangmanPage> {
                             e,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 30,
+                              fontSize: 28,
                               fontFamily: Constants.fontFamily,
                               fontWeight: FontWeight.bold,
                             ),
@@ -155,41 +338,7 @@ class _HangmanPageState extends State<HangmanPage> {
               ],
             ),
           ),
-          if (isGameOver())
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.black.withOpacity(0.8),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      isWordGuessed() ? 'You Passed!' : 'You Lost!',
-                      style: const TextStyle(
-                        fontSize: 48,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    TextButton(
-                      onPressed: resetGame,
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                      ),
-                      child: Text(
-                        isWordGuessed() ? 'Next Level' : 'Play Again',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          if (isGameOver()) messageBar(),
         ],
       ),
     );

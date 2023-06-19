@@ -7,6 +7,7 @@ import '../hangman/hangman_page.dart';
 
 class CategoryPage extends StatefulWidget {
   final Games game;
+
   const CategoryPage({Key? key, required this.game}) : super(key: key);
 
   @override
@@ -20,6 +21,29 @@ class _CategoryPageState extends State<CategoryPage> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      floatingActionButton: Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: const Color(0xff3E87FF),
+            width: 3.0,
+          ),
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          shape: const CircleBorder(),
+          backgroundColor: const Color(0xffFFFB00),
+          child: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       body: Container(
         alignment: Alignment.center,
         decoration: const BoxDecoration(
@@ -77,7 +101,8 @@ class _CategoryPageState extends State<CategoryPage> {
                               color: Color(0xff42B462),
                             ),
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 0.0),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),
                                 borderSide: const BorderSide(

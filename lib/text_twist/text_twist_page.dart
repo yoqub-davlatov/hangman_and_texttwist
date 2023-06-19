@@ -15,7 +15,7 @@ class _TextTwistState extends State<TextTwist> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "WordTwist",
+          "TextTwist",
           style: TextStyle(
             color: Colors.white,
             fontFamily: "KristenITC",

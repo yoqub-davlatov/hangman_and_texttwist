@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:hangman_and_texttwist/services/api_service.dart';
 import '../constants/constants.dart';
 import './UI/widget/figure_image.dart';
 import './UI/widget/letter.dart';
 import './utils/Game.dart';
-import 'package:http/http.dart' as http;
 
 class HangmanPage extends StatefulWidget {
   const HangmanPage({super.key});
@@ -23,7 +20,8 @@ class _HangmanPageState extends State<HangmanPage> {
   String hint = '';
   bool showHint = true;
   final List<String> alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').toList();
-
+  String message =
+      'Give me a word from a category of colors. For that particular word provide me a full sentence as a hint that could help me to guess the word. Try to make a hint with no more than 10 words.Return the answer in the following json format, without any extra words: {"word" : "YOUR_WORD", "hint" : "<HINT>"}. Please return to me only the json format';
   int points = 300;
   int coins = 5;
   int round = 1;
@@ -35,49 +33,13 @@ class _HangmanPageState extends State<HangmanPage> {
     startTimer();
   }
 
-  Future<void> getMessage() async {
-    try {
-      String url = "https://api.openai.com/v1/chat/completions";
-      String openAIkey = <YOUR_OPENAI_KEY>;
-      String message =
-          'Give me a word from a category of colors. For that particular word provide me a full sentence as a hint that could help me to guess the word. Try to make a hint with no more than 10 words.Return the answer in the following json format, without any extra words: {"word" : "YOUR_WORD", "hint" : "<HINT>"}. Please return to me only the json format';
-      var response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer $openAIkey',
-          'Content-Type': 'application/json'
-        },
-        body: jsonEncode(
-          {
-            "model": "gpt-3.5-turbo",
-            "messages": [
-              {"role": "system", "content": message},
-              {"role": "user", "content": message},
-            ]
-          },
-        ),
-      );
-
-      Map jsonResponse = jsonDecode(response.body);
-
-      String content = jsonResponse['choices'].length > 0
-          ? jsonResponse['choices'][0]['message']['content'].toString()
-          : '';
-
-      log(content);
-      Map contentResponse = jsonDecode(content);
-      log("word -> ${contentResponse['word']}");
-      log("hint -> ${contentResponse['hint']}");
-
-      setState(() {
+  void getMessage() async {
+    final contentResponse = await APIService.getMessage(message);
+    setState(() {
         showHint = true;
         word = contentResponse['word'].toString().toUpperCase();
         hint = contentResponse['hint'];
-      });
-    } catch (e) {
-      log("Error: $e"); // most likely because of json format sent by api
-      getMessage();
-    }
+    });
   }
 
   void startTimer() {

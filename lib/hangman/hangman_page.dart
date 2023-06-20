@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 import './UI/widget/figure_image.dart';
 import './UI/widget/letter.dart';
 import './utils/Game.dart';
+import 'package:http/http.dart' as http;
 
 class HangmanPage extends StatefulWidget {
   const HangmanPage({super.key});
@@ -14,29 +17,73 @@ class HangmanPage extends StatefulWidget {
 }
 
 class _HangmanPageState extends State<HangmanPage> {
-  Duration duration = const Duration(minutes: 1, seconds: 30);
+  Duration duration = const Duration(seconds: 0);
   Timer? timer;
-  String word = 'Codeforces'.toUpperCase();
+  String word = "CHATGPT";
+  String hint = '';
+  bool showHint = true;
   final List<String> alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').toList();
 
   int points = 300;
-  int coins = 50;
+  int coins = 5;
   int round = 1;
 
   @override
   void initState() {
     super.initState();
+    getMessage();
     startTimer();
+  }
+
+  Future<void> getMessage() async {
+    try {
+      String url = "https://api.openai.com/v1/chat/completions";
+      String openAIkey = <YOUR_OPENAI_KEY>;
+      String message =
+          'Give me a word from a category of colors. For that particular word provide me a full sentence as a hint that could help me to guess the word. Try to make a hint with no more than 10 words.Return the answer in the following json format, without any extra words: {"word" : "YOUR_WORD", "hint" : "<HINT>"}. Please return to me only the json format';
+      var response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $openAIkey',
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode(
+          {
+            "model": "gpt-3.5-turbo",
+            "messages": [
+              {"role": "system", "content": message},
+              {"role": "user", "content": message},
+            ]
+          },
+        ),
+      );
+
+      Map jsonResponse = jsonDecode(response.body);
+
+      String content = jsonResponse['choices'].length > 0
+          ? jsonResponse['choices'][0]['message']['content'].toString()
+          : '';
+
+      log(content);
+      Map contentResponse = jsonDecode(content);
+      log("word -> ${contentResponse['word']}");
+      log("hint -> ${contentResponse['hint']}");
+
+      setState(() {
+        showHint = true;
+        word = contentResponse['word'].toString().toUpperCase();
+        hint = contentResponse['hint'];
+      });
+    } catch (e) {
+      log("Error: $e"); // most likely because of json format sent by api
+      getMessage();
+    }
   }
 
   void startTimer() {
     void addSecond() {
       setState(() {
-        final seconds = duration.inSeconds - 1;
-        if (seconds < 0) {
-          timer?.cancel();
-          return;
-        }
+        final seconds = duration.inSeconds + 1;
         duration = Duration(seconds: seconds);
       });
     }
@@ -45,25 +92,24 @@ class _HangmanPageState extends State<HangmanPage> {
   }
 
   bool isGameOver() {
-    return Game.gameTries >= 6 || isWordGuessed() || duration.inSeconds == 0;
+    return Game.gameTries >= 6 || isWordGuessed();
   }
 
   void resetGame() {
     if (isWordGuessed()) {
       round++;
       points += (6 - Game.gameTries) * 100;
-      coins += 10;
+      coins++;
     } else {
       round = 1;
     }
-    duration = const Duration(minutes: 1, seconds: 30);
-    startTimer();
     setState(() {
-      word = 'Codeforces'
-          .toUpperCase(); // replace this line with your word generating logic if you want different words each time
+      getMessage(); // replace this line with your word generating logic if you want different words each time
       Game.selectedChar = [];
       Game.gameTries = 0;
     });
+    duration = const Duration(seconds: 0);
+    startTimer();
   }
 
   bool isWordGuessed() {
@@ -276,6 +322,28 @@ class _HangmanPageState extends State<HangmanPage> {
                           Game.gameTries >= 5, "assets/images/rl_black.png"),
                       figureImage(
                           Game.gameTries >= 6, "assets/images/ll_black.png"),
+                      Visibility(
+                        visible: showHint,
+                        child: Container(
+                          color: Colors.amber,
+                          height: 200,
+                          width: 300,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(hint),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showHint = false;
+                                  });
+                                },
+                                child: Text("Ok"),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

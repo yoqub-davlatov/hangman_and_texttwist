@@ -79,44 +79,6 @@ class _HangmanPageState extends State<HangmanPage> {
     return true;
   }
 
-  Widget messageBar() {
-    timerKey.currentState?.stopTimer();
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.black.withOpacity(0.8),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              isWordGuessed() ? 'You Passed!' : 'You Lost!',
-              style: const TextStyle(
-                fontSize: 48,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 30),
-            TextButton(
-              onPressed: resetGame,
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.blue,
-              ),
-              child: Text(
-                isWordGuessed() ? 'Next Level' : 'Play Again',
-                style: const TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

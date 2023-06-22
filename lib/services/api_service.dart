@@ -9,7 +9,6 @@ Future<Map> hangmanApiCall(final String prompt) async {
   OpenAI.apiKey = API_KEY;
 
   // Start using!
-
   OpenAIChatCompletionModel completion = await OpenAI.instance.chat.create(
     model: "gpt-3.5-turbo",
     // temperature: 0.2,

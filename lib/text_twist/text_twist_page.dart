@@ -13,10 +13,11 @@ class TextTwist extends StatefulWidget {
 }
 
 class _TextTwistState extends State<TextTwist> {
+  String input = "";
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    // double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -45,8 +46,7 @@ class _TextTwistState extends State<TextTwist> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(),
-            const StopWatch(),
-            // Timer widget, think about stopping it when the word is guessed
+            const StopWatch(), // Timer widget, think about stopping it when the word is guessed
             Stack(
               children: [
                 Container(
@@ -63,7 +63,8 @@ class _TextTwistState extends State<TextTwist> {
                   top: 30,
                   left: 20,
                   child: WordBox(
-                    inputWord: WordsInfo.getWord(),
+                    inputWord: input,
+                    words: WordsInfo.words,
                   ),
                 ),
               ],
@@ -77,9 +78,9 @@ class _TextTwistState extends State<TextTwist> {
                     child: letter(e, e != ''));
               }).toList(),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
+            Wrap(
+              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // mainAxisSize: MainAxisSize.min,
               children: WordsInfo.letters.map((e) {
                 return RawMaterialButton(
                     onPressed: () {
@@ -135,27 +136,30 @@ class _TextTwistState extends State<TextTwist> {
                     ),
                   ),
                 ),
-                RawMaterialButton(
-                  onPressed: () {
-                    print(WordsInfo.words);
-                    print(WordsInfo.letters);
-                  },
-                  fillColor: Colors.green.shade800,
-                  constraints: BoxConstraints.tight(const Size(100, 45)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: const Text(
-                    "Submit",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontFamily: 'KristenITC',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                )
               ],
+            ),
+            RawMaterialButton(
+              onPressed: () {
+                print(WordsInfo.words);
+                print(WordsInfo.letters);
+                setState(() {
+                  input = WordsInfo.getWord();
+                });
+              },
+              fillColor: Colors.green.shade800,
+              constraints: BoxConstraints.tight(const Size(100, 45)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: const Text(
+                "Submit",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontFamily: 'KristenITC',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),

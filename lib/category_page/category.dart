@@ -34,6 +34,7 @@ class _CategoryPageState extends State<CategoryPage> {
 
   Future<void> setUpTextTwist() async {
     await getWords();
+
     WordsInfo.words = WordsInfo.words.map((e) => e.toLowerCase()).toList();
     Map<String, int> letterCounts = {};
     List<String> dict = [];
@@ -61,7 +62,8 @@ class _CategoryPageState extends State<CategoryPage> {
         }
       }
     }
-
+    dict.removeLast();
+    dict.shuffle();
     WordsInfo.letters = dict;
   }
 

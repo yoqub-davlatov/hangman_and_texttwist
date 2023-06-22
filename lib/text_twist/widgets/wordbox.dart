@@ -46,15 +46,16 @@ class _WordBoxState extends State<WordBox> {
                             ),
                             height: 30,
                             width: 25,
-                            padding: const EdgeInsets.all(5),
                             child: Visibility(
                               visible: isGuessed(inputWord, word),
-                              child: Text(
-                                letter,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'KristenITC',
+                              child: Center(
+                                child: Text(
+                                  letter,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'KristenITC',
+                                  ),
                                 ),
                               ),
                             ),

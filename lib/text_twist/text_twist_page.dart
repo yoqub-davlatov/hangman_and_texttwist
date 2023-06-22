@@ -154,6 +154,9 @@ class _TextTwistState extends State<TextTwist> {
                 print(WordsInfo.letters);
                 setState(() {
                   input = WordsInfo.getWord();
+                  WordsInfo.typedLetters =
+                      WordsInfo.typedLetters.map((_) => '').toList();
+                  WordsInfo.index = 0;
                 });
               },
               fillColor: Colors.green.shade800,

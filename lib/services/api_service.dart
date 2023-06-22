@@ -3,10 +3,8 @@ import 'dart:developer';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:http/http.dart' as http;
 
-import '../apikey.dart';
-
 Future<Map> hangmanApiCall(final String prompt) async {
-  OpenAI.apiKey = API_KEY;
+  OpenAI.apiKey = "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";
 
   // Start using!
   OpenAIChatCompletionModel completion = await OpenAI.instance.chat.create(
@@ -27,7 +25,7 @@ class APIService {
   static Future<Map> getMessage(final String prompt) async {
     try {
       String url = "https://api.openai.com/v1/chat/completions";
-      String openAIkey = API_KEY;
+      String openAIkey = "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";
       var response = await http.post(
         Uri.parse(url),
         headers: {

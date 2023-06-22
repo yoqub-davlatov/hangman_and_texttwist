@@ -13,7 +13,8 @@ import 'utils/Game.dart';
 import 'UI/widget/points_widget.dart';
 
 class HangmanPage extends StatefulWidget {
-  const HangmanPage({super.key});
+  final String category;
+  const HangmanPage({super.key, required this.category});
 
   @override
   State<HangmanPage> createState() => _HangmanPageState();
@@ -21,9 +22,7 @@ class HangmanPage extends StatefulWidget {
 
 class _HangmanPageState extends State<HangmanPage> {
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
-
-  String word = "CHATGPT";
-  String hint = '';
+  late String prompt = Game.getPrompt(widget.category);
 
   Player player = Player();
 
@@ -42,11 +41,11 @@ class _HangmanPageState extends State<HangmanPage> {
 
   void getMessage() async {
     // final contentResponse = await APIService.getMessage(Game.message);
-    final contentResponse = await hangmanApiCall(Game.message);
+    final contentResponse = await hangmanApiCall(prompt);
     setState(() {
       showHint = true;
-      word = contentResponse['word'].toString().toUpperCase();
-      hint = contentResponse['hint'];
+      Game.word = contentResponse['word'].toString().toUpperCase();
+      Game.hint = contentResponse['hint'];
     });
   }
 
@@ -71,7 +70,7 @@ class _HangmanPageState extends State<HangmanPage> {
   }
 
   bool isWordGuessed() {
-    for (var letter in word.split('')) {
+    for (var letter in Game.word.split('')) {
       if (!Game.selectedChar.contains(letter)) {
         return false;
       }
@@ -165,7 +164,7 @@ class _HangmanPageState extends State<HangmanPage> {
                           Game.gameTries >= 5, "assets/images/rl_black.png"),
                       figureImage(
                           Game.gameTries >= 6, "assets/images/ll_black.png"),
-                      showHintWidget(showHint, hint, setHintFalse),
+                      showHintWidget(showHint, Game.hint, setHintFalse),
                     ],
                   ),
                 ),
@@ -175,7 +174,7 @@ class _HangmanPageState extends State<HangmanPage> {
                     alignment: WrapAlignment.center,
                     spacing: 3.0,
                     runSpacing: 3.0,
-                    children: word
+                    children: Game.word
                         .split('')
                         .map((e) => letter(e.toUpperCase(),
                             !Game.selectedChar.contains(e.toUpperCase())))
@@ -198,7 +197,7 @@ class _HangmanPageState extends State<HangmanPage> {
                                   : () {
                                       setState(() {
                                         Game.selectedChar.add(e);
-                                        if (!word
+                                        if (!Game.word
                                             .split('')
                                             .contains(e.toUpperCase())) {
                                           Game.gameTries++;
@@ -209,7 +208,7 @@ class _HangmanPageState extends State<HangmanPage> {
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           fillColor: Game.selectedChar.contains(e)
-                              ? word.split('').contains(e.toUpperCase())
+                              ? Game.word.split('').contains(e.toUpperCase())
                                   ? Colors.green
                                   : Colors.black
                               : Colors.blue,

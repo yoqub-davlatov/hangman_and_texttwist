@@ -202,7 +202,7 @@ class _CategoryPageState extends State<CategoryPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => widget.game == Games.hangman
-                                ? const HangmanPage()
+                                ? HangmanPage(category: Settings.selected,)
                                 : const TextTwist()),
                       );
                     },

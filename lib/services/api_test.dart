@@ -12,7 +12,7 @@ Future<List> apiCategoryCall(category) async {
     temperature: 0.2,
     messages: [
       OpenAIChatCompletionChoiceMessageModel(
-        content: "Give me 4-5 words in category: $category. Compose words with minimum common letters. Each word should be 6 letters maximum. Separate words with commas with spaces. Do not provide the category, just the items",
+        content: "Give me 4-5 words in category: $category. Compose words with maximum common letters. Each word should be 6 letters maximum. Separate words with commas with spaces. Do not provide the category, just the items",
         role: OpenAIChatMessageRole.user,
       ),
 

@@ -74,6 +74,7 @@ class _TextTwistState extends State<TextTwist> {
                   left: 20,
                   child: WordBox(
                     inputWord: input,
+                    words: WordsInfo.words,
                   ),
                 ),
               ],

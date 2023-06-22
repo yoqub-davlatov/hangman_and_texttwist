@@ -7,7 +7,7 @@ class APIService {
   static Future<Map> getMessage(final String prompt) async {
     try {
       String url = "https://api.openai.com/v1/chat/completions";
-      String openAIkey = <YOUR_OPENAI_KEY>;
+      String openAIkey = YOUR_OPENAI_KEY;
       var response = await http.post(
         Uri.parse(url),
         headers: {

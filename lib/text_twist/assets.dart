@@ -6,8 +6,8 @@ class WordsInfo {
   a.length > b.length ? a : b).split("").map((e) => "").toList();
 
   static List words = [];
-  static String getWord()
-  {
+
+  static String getWord() {
     return typedLetters.join().toLowerCase();
   }
 }

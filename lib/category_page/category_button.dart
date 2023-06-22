@@ -14,10 +14,11 @@ OutlinedButton categoryButton(String name, bool selected, Function callback) {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
-      side: BorderSide(
-        color: selected ? Colors.yellow : const Color(0xff3E87FF),
+      side: const BorderSide(
+        color: Color(0xff3E87FF),
         width: 3,
       ),
+      backgroundColor: selected ? Colors.grey[300] : null,
     ),
     child: Text(
       name,

@@ -41,6 +41,9 @@ class TimerWidgetState extends State<TimerWidget> {
   }
 
   void startTimer() {
+    if (timer != null && timer!.isActive) {
+      return;
+    }
     void addSecond() {
       setState(() {
         final seconds = duration.inSeconds + 1;

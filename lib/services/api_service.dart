@@ -1,12 +1,33 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:dart_openai/dart_openai.dart';
 import 'package:http/http.dart' as http;
+
+import '../apikey.dart';
+
+Future<Map> hangmanApiCall(final String prompt) async {
+  OpenAI.apiKey = API_KEY;
+
+  // Start using!
+  OpenAIChatCompletionModel completion = await OpenAI.instance.chat.create(
+    model: "gpt-3.5-turbo",
+    // temperature: 0.2,
+    messages: [
+      OpenAIChatCompletionChoiceMessageModel(
+        content: prompt,
+        role: OpenAIChatMessageRole.user,
+      ),
+    ],
+  );
+  log(completion.choices.first.message.content);
+  return jsonDecode(completion.choices.first.message.content);
+}
 
 class APIService {
   static Future<Map> getMessage(final String prompt) async {
     try {
       String url = "https://api.openai.com/v1/chat/completions";
-      String openAIkey = "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";
+      String openAIkey = API_KEY;
       var response = await http.post(
         Uri.parse(url),
         headers: {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/hangman/utils/player.dart';
+import 'package:hangman_and_texttwist/hangman/UI/widget/fail_pass_widget.dart';
+import '../hangman/utils/player.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/hint_widget.dart';
 import '../hangman/UI/widget/level_widget.dart';
@@ -40,7 +41,8 @@ class _HangmanPageState extends State<HangmanPage> {
   }
 
   void getMessage() async {
-    final contentResponse = await APIService.getMessage(Game.message);
+    // final contentResponse = await APIService.getMessage(Game.message);
+    final contentResponse = await hangmanApiCall(Game.message);
     setState(() {
       showHint = true;
       word = contentResponse['word'].toString().toUpperCase();
@@ -75,45 +77,6 @@ class _HangmanPageState extends State<HangmanPage> {
       }
     }
     return true;
-  }
-
-
-  Widget messageBar() {
-    timerKey.currentState?.stopTimer();
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.black.withOpacity(0.8),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              isWordGuessed() ? 'You Passed!' : 'You Lost!',
-              style: const TextStyle(
-                fontSize: 48,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 30),
-            TextButton(
-              onPressed: resetGame,
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.blue,
-              ),
-              child: Text(
-                isWordGuessed() ? 'Next Level' : 'Play Again',
-                style: const TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -265,7 +228,7 @@ class _HangmanPageState extends State<HangmanPage> {
               ],
             ),
           ),
-          if (isGameOver()) messageBar(),
+          if (isGameOver()) failPassWidget(context, isWordGuessed(), resetGame),
         ],
       ),
     );

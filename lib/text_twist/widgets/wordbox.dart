@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import '../text_twist_page.dart';
 
 class WordBox extends StatefulWidget {
-  final String inputWord;
+  String inputWord = "";
 
-  const WordBox({super.key, required this.inputWord});
+  WordBox({super.key, required this.inputWord});
 
   @override
   State<WordBox> createState() => _WordBoxState();
 }
 
 class _WordBoxState extends State<WordBox> {
-  List<String> words = ["cat", "pen", "ate", "dog", "bat", "rat", "pen", "penca"];
+  List<String> words = ["cat", "pen", "ate", "dog", "bat", "rat", "pan", "penca"];
+  Set<String> guessed = {};
+
 
   @override
   Widget build(BuildContext context) {
-    String word2 = widget.inputWord;
+    String inputWord = widget.inputWord;
     return Column(
       children: [
         Container(
@@ -38,13 +40,13 @@ class _WordBoxState extends State<WordBox> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
                                 border: Border.all(width: 2, color: Colors.blue),
-                                color:  word2 == word ? Colors.green : Colors.transparent,
+                                color:  isGuessed(inputWord, word) ? Colors.green : Colors.transparent,
                               ),
                               height: 30,
                               width: 25,
                               padding: const EdgeInsets.all(5),
                               child: Visibility(
-                                visible: word2 == word,
+                                visible: isGuessed(inputWord, word),
                                 child: Text(
                                   letter,
                                   style: const TextStyle(
@@ -64,5 +66,13 @@ class _WordBoxState extends State<WordBox> {
         ),
       ],
     );
+  }
+  bool isGuessed(String inputWord, String currentWord)
+  {
+    if (guessed.contains(currentWord) || inputWord == currentWord) {
+      guessed.add(inputWord);
+      return true;
+    }
+    return false;
   }
 }

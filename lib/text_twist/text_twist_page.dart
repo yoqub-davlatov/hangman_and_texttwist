@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'widgets/letterbox.dart';
@@ -15,6 +14,7 @@ class TextTwist extends StatefulWidget {
 }
 
 class _TextTwistState extends State<TextTwist> {
+  String input = "";
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery
@@ -53,8 +53,7 @@ class _TextTwistState extends State<TextTwist> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(),
-            const StopWatch(),
-            // Timer widget, think about stopping it when the word is guessed
+            const StopWatch(),  // Timer widget, think about stopping it when the word is guessed
             Stack(
               children: [
                 Container(
@@ -74,7 +73,7 @@ class _TextTwistState extends State<TextTwist> {
                   top: 30,
                   left: 20,
                   child: WordBox(
-                    inputWord: WordsInfo.getWord(),
+                    inputWord: input,
                   ),
                 ),
               ],
@@ -88,9 +87,9 @@ class _TextTwistState extends State<TextTwist> {
                     child: letter(e, e != ''));
               }).toList(),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.min,
+            Wrap(
+              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // mainAxisSize: MainAxisSize.min,
               children: WordsInfo.letters.map((e) {
                 return RawMaterialButton(
                     onPressed: () {
@@ -152,6 +151,9 @@ class _TextTwistState extends State<TextTwist> {
               onPressed: () {
                 print(WordsInfo.words);
                 print(WordsInfo.letters);
+                setState(() {
+                  input = WordsInfo.getWord();
+                });
               },
               fillColor: Colors.green.shade800,
               constraints: BoxConstraints.tight(const Size(100, 45)),

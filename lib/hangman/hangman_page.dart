@@ -1,10 +1,15 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:hangman_and_texttwist/hangman/utils/player.dart';
+import '../hangman/UI/widget/TimerWidget.dart';
+import '../hangman/UI/widget/hint_widget.dart';
+import '../hangman/UI/widget/level_widget.dart';
+import '../hangman/UI/widget/show_hint_widget.dart';
+import '../services/api_service.dart';
 import '../constants/constants.dart';
-import './UI/widget/figure_image.dart';
-import './UI/widget/letter.dart';
-import './utils/Game.dart';
+import 'UI/widget/figure_image.dart';
+import 'UI/widget/letter.dart';
+import 'utils/Game.dart';
+import 'UI/widget/points_widget.dart';
 
 class HangmanPage extends StatefulWidget {
   const HangmanPage({super.key});
@@ -14,55 +19,52 @@ class HangmanPage extends StatefulWidget {
 }
 
 class _HangmanPageState extends State<HangmanPage> {
-  Duration duration = const Duration(minutes: 1, seconds: 30);
-  Timer? timer;
-  String word = 'Codeforces'.toUpperCase();
-  final List<String> alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').toList();
+  GlobalKey<TimerWidgetState> timerKey = GlobalKey();
 
-  int points = 300;
-  int coins = 50;
-  int round = 1;
+  String word = "CHATGPT";
+  String hint = '';
+
+  Player player = Player();
 
   @override
   void initState() {
     super.initState();
-    startTimer();
+    getMessage();
   }
 
-  void startTimer() {
-    void addSecond() {
-      setState(() {
-        final seconds = duration.inSeconds - 1;
-        if (seconds < 0) {
-          timer?.cancel();
-          return;
-        }
-        duration = Duration(seconds: seconds);
-      });
-    }
+  bool showHint = true;
+  void setHintFalse() {
+    setState(() {
+      showHint = false;
+    });
+  }
 
-    timer = Timer.periodic(const Duration(seconds: 1), (_) => addSecond());
+  void getMessage() async {
+    final contentResponse = await APIService.getMessage(Game.message);
+    setState(() {
+      showHint = true;
+      word = contentResponse['word'].toString().toUpperCase();
+      hint = contentResponse['hint'];
+    });
   }
 
   bool isGameOver() {
-    return Game.gameTries >= 6 || isWordGuessed() || duration.inSeconds == 0;
+    return Game.gameTries >= 6 || isWordGuessed();
   }
 
   void resetGame() {
     if (isWordGuessed()) {
-      round++;
-      points += (6 - Game.gameTries) * 100;
-      coins += 10;
+      player.level++;
+      player.points += (6 - Game.gameTries) * 100;
+      player.coins++;
     } else {
-      round = 1;
+      player.level = 1;
     }
-    duration = const Duration(minutes: 1, seconds: 30);
-    startTimer();
     setState(() {
-      word = 'Codeforces'
-          .toUpperCase(); // replace this line with your word generating logic if you want different words each time
+      getMessage();
       Game.selectedChar = [];
       Game.gameTries = 0;
+      timerKey.currentState?.restartTimer();
     });
   }
 
@@ -89,7 +91,7 @@ class _HangmanPageState extends State<HangmanPage> {
   }
 
   Widget messageBar() {
-    timer?.cancel();
+    timerKey.currentState?.stopTimer();
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -160,72 +162,9 @@ class _HangmanPageState extends State<HangmanPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      width: 118,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue, width: 2),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber),
-                          Text(
-                            "$points",
-                            style: const TextStyle(
-                              fontFamily: Constants.fontFamily,
-                              fontSize: 24,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue, width: 2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            "$round",
-                            style: const TextStyle(
-                              fontFamily: Constants.fontFamily,
-                              fontSize: 26,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 118,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue, width: 2),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            "$coins",
-                            style: const TextStyle(
-                              fontFamily: Constants.fontFamily,
-                              fontSize: 24,
-                            ),
-                          ),
-                          const Icon(
-                            Icons.diamond,
-                            color: Colors.red,
-                          ),
-                        ],
-                      ),
-                    ),
+                    pointsWidget(player.points),
+                    levelWidget(player.level),
+                    diamondWidget(player.coins),
                   ],
                 ),
                 Row(
@@ -242,8 +181,8 @@ class _HangmanPageState extends State<HangmanPage> {
                         fixedSize: const Size(45, 45),
                       ),
                     ),
-                    Container(
-                      child: showTimerWidget(),
+                    TimerWidget(
+                      key: timerKey,
                     ),
                     IconButton(
                       onPressed: () {},
@@ -275,6 +214,7 @@ class _HangmanPageState extends State<HangmanPage> {
                           Game.gameTries >= 5, "assets/images/rl_black.png"),
                       figureImage(
                           Game.gameTries >= 6, "assets/images/ll_black.png"),
+                      showHintWidget(showHint, hint, setHintFalse),
                     ],
                   ),
                 ),
@@ -299,7 +239,7 @@ class _HangmanPageState extends State<HangmanPage> {
                     crossAxisSpacing: 8.0,
                     mainAxisSpacing: 8.0,
                     padding: const EdgeInsets.all(8.0),
-                    children: alphabet.map((e) {
+                    children: Game.alphabet.map((e) {
                       return RawMaterialButton(
                           onPressed:
                               isGameOver() || Game.selectedChar.contains(e)

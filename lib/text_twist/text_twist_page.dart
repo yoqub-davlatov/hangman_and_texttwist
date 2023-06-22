@@ -137,12 +137,24 @@ class _TextTwistState extends State<TextTwist> {
                     ),
                   ),
                 ),
-                RawMaterialButton(
-                  onPressed: () {},
-                  fillColor: Colors.green.shade800,
-                  constraints: BoxConstraints.tight(const Size(100, 45)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              ),
+              RawMaterialButton(
+                onPressed: () {
+                  print(WordsInfo.words);
+                  print(WordsInfo.letters);
+                },
+                fillColor: Colors.green.shade800,
+                constraints: BoxConstraints.tight(const Size(100, 45)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: const Text(
+                  "Submit",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontFamily: 'KristenITC',
+                    fontWeight: FontWeight.bold,
                   ),
                   child: const Text(
                     "Submit",

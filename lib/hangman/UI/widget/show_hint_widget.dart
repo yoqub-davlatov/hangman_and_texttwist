@@ -14,7 +14,7 @@ Widget showHintWidget(bool showHint, final String hint, final callBack) {
         ),
         borderRadius: BorderRadius.circular(50),
       ),
-      height: 200,
+      height: 300,
       width: 300,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

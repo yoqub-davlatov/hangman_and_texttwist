@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hangman_and_texttwist/constants/constants.dart';
 
+import '../../utils/Game.dart';
+
 Widget failPassWidget(BuildContext context, bool pass, final resetGame) {
   const double verticalRatio = 322.0 / 823.0;
   const double horizontalRatio = 335.0 / 421.0;
@@ -32,7 +34,7 @@ Widget failPassWidget(BuildContext context, bool pass, final resetGame) {
                     Text(
                       pass
                           ? 'The man lives to see another day!\nyay :)'
-                          : 'The man dies\n:(',
+                          : 'Word: ${Game.word}\nThe man dies\n:(',
                       style: const TextStyle(
                         fontSize: 22,
                         color: Colors.blue,

@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/text_twist/widgets/letterbox.dart';
-import 'package:hangman_and_texttwist/text_twist/assets.dart';
+import 'widgets/letterbox.dart';
+import 'assets.dart';
+import '../constants/constants.dart';
+import "widgets/stopwatch.dart";
+import 'widgets/wordbox.dart';
 
 class TextTwist extends StatefulWidget {
   const TextTwist({super.key});
@@ -12,10 +17,12 @@ class TextTwist extends StatefulWidget {
 class _TextTwistState extends State<TextTwist> {
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "WordTwist",
+          "TextTwist",
           style: TextStyle(
             color: Colors.white,
             fontFamily: "KristenITC",
@@ -26,77 +33,108 @@ class _TextTwistState extends State<TextTwist> {
         centerTitle: true,
         backgroundColor: Colors.blue,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(
-            height: 500,
-            width: 100,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              Constants.bckgrImagePath,
+            ),
+            fit: BoxFit.fill,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: WordsInfo.typedLetters.map((e) {
-              return Container(
-                  padding: const EdgeInsets.all(2.0),
-                  child: letter(e, e != ''));
-            }).toList(),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.min,
-            children: WordsInfo.letters.map((e) {
-              return RawMaterialButton(
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(),
+            const StopWatch(),
+            // Timer widget, think about stopping it when the word is guessed
+            Stack(
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  height: height * 0.45,
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(color: Colors.blue, width: 2),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                 Positioned(
+                  top: 30,
+                  left: 20,
+                  child: WordBox(
+                    inputWord: WordsInfo.getWord(),
+                  ),
+                ),
+              ],
+            ),
+            // WordBox widget
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: WordsInfo.typedLetters.map((e) {
+                return Container(
+                    padding: const EdgeInsets.all(2.0),
+                    child: letter(e, e != ''));
+              }).toList(),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.min,
+              children: WordsInfo.letters.map((e) {
+                return RawMaterialButton(
+                    onPressed: () {
+                      setState(() {
+                        if (!WordsInfo.typedLetters.contains(e)) {
+                          WordsInfo.typedLetters[WordsInfo.index] = e;
+                          WordsInfo.index++;
+                        }
+                      });
+                    },
+                    fillColor: WordsInfo.typedLetters.contains(e)
+                        ? Colors.white
+                        : Colors.blue,
+                    constraints: BoxConstraints.tight(const Size(40, 40)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Text(
+                      e,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontFamily: 'KristenITC',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ));
+              }).toList(),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                RawMaterialButton(
+                  fillColor: Colors.red.shade800,
                   onPressed: () {
                     setState(() {
-                      if (!WordsInfo.typedLetters.contains(e)) {
-                        WordsInfo.typedLetters[WordsInfo.index] = e;
-                        WordsInfo.index++;
-                      }
+                      WordsInfo.typedLetters =
+                          WordsInfo.typedLetters.map((_) => '').toList();
+                      WordsInfo.index = 0;
                     });
                   },
-                  fillColor: WordsInfo.typedLetters.contains(e)
-                      ? Colors.white
-                      : Colors.blue,
-                  constraints: BoxConstraints.tight(const Size(40, 40)),
+                  constraints: BoxConstraints.tight(const Size(100, 45)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: Text(
-                    e,
-                    style: const TextStyle(
+                  child: const Text(
+                    "Clear",
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 30,
+                      fontSize: 26,
                       fontFamily: 'KristenITC',
                       fontWeight: FontWeight.bold,
                     ),
-                  ));
-            }).toList(),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              RawMaterialButton(
-                fillColor: Colors.red.shade800,
-                onPressed: () {
-                  setState(() {
-                    WordsInfo.typedLetters =
-                        WordsInfo.typedLetters.map((_) => '').toList();
-                    WordsInfo.index = 0;
-                  });
-                },
-                constraints: BoxConstraints.tight(const Size(100, 45)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: const Text(
-                  "Clear",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontFamily: 'KristenITC',
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -118,11 +156,20 @@ class _TextTwistState extends State<TextTwist> {
                     fontFamily: 'KristenITC',
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-              )
-            ],
-          )
-        ],
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontFamily: 'KristenITC',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

@@ -1,10 +1,15 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/services/api_service.dart';
+import 'package:hangman_and_texttwist/hangman/utils/player.dart';
+import '../hangman/UI/widget/TimerWidget.dart';
+import '../hangman/UI/widget/hint_widget.dart';
+import '../hangman/UI/widget/level_widget.dart';
+import '../hangman/UI/widget/show_hint_widget.dart';
+import '../services/api_service.dart';
 import '../constants/constants.dart';
-import './UI/widget/figure_image.dart';
-import './UI/widget/letter.dart';
-import './utils/Game.dart';
+import 'UI/widget/figure_image.dart';
+import 'UI/widget/letter.dart';
+import 'utils/Game.dart';
+import 'UI/widget/points_widget.dart';
 
 class HangmanPage extends StatefulWidget {
   const HangmanPage({super.key});
@@ -14,43 +19,33 @@ class HangmanPage extends StatefulWidget {
 }
 
 class _HangmanPageState extends State<HangmanPage> {
-  Duration duration = const Duration(seconds: 0);
-  Timer? timer;
+  GlobalKey<TimerWidgetState> timerKey = GlobalKey();
+
   String word = "CHATGPT";
   String hint = '';
-  bool showHint = true;
-  final List<String> alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').toList();
-  String message =
-      'Give me a word from a category of colors. For that particular word provide me a full sentence as a hint that could help me to guess the word. Try to make a hint with no more than 10 words.Return the answer in the following json format, without any extra words: {"word" : "YOUR_WORD", "hint" : "<HINT>"}. Please return to me only the json format';
-  int points = 300;
-  int coins = 5;
-  int round = 1;
+
+  Player player = Player();
 
   @override
   void initState() {
     super.initState();
     getMessage();
-    startTimer();
   }
 
-  void getMessage() async {
-    final contentResponse = await APIService.getMessage(message);
+  bool showHint = true;
+  void setHintFalse() {
     setState(() {
-        showHint = true;
-        word = contentResponse['word'].toString().toUpperCase();
-        hint = contentResponse['hint'];
+      showHint = false;
     });
   }
 
-  void startTimer() {
-    void addSecond() {
-      setState(() {
-        final seconds = duration.inSeconds + 1;
-        duration = Duration(seconds: seconds);
-      });
-    }
-
-    timer = Timer.periodic(const Duration(seconds: 1), (_) => addSecond());
+  void getMessage() async {
+    final contentResponse = await APIService.getMessage(Game.message);
+    setState(() {
+      showHint = true;
+      word = contentResponse['word'].toString().toUpperCase();
+      hint = contentResponse['hint'];
+    });
   }
 
   bool isGameOver() {
@@ -59,19 +54,18 @@ class _HangmanPageState extends State<HangmanPage> {
 
   void resetGame() {
     if (isWordGuessed()) {
-      round++;
-      points += (6 - Game.gameTries) * 100;
-      coins++;
+      player.level++;
+      player.points += (6 - Game.gameTries) * 100;
+      player.coins++;
     } else {
-      round = 1;
+      player.level = 1;
     }
     setState(() {
-      getMessage(); // replace this line with your word generating logic if you want different words each time
+      getMessage();
       Game.selectedChar = [];
       Game.gameTries = 0;
+      timerKey.currentState?.restartTimer();
     });
-    duration = const Duration(seconds: 0);
-    startTimer();
   }
 
   bool isWordGuessed() {
@@ -83,22 +77,8 @@ class _HangmanPageState extends State<HangmanPage> {
     return true;
   }
 
-  Widget showTimerWidget() {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-
-    return Text(
-      "$minutes:$seconds",
-      style: const TextStyle(
-        fontFamily: Constants.fontFamily,
-        fontSize: 30,
-      ),
-    );
-  }
-
   Widget messageBar() {
-    timer?.cancel();
+    timerKey.currentState?.stopTimer();
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -169,72 +149,9 @@ class _HangmanPageState extends State<HangmanPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      width: 118,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue, width: 2),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber),
-                          Text(
-                            "$points",
-                            style: const TextStyle(
-                              fontFamily: Constants.fontFamily,
-                              fontSize: 24,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue, width: 2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            "$round",
-                            style: const TextStyle(
-                              fontFamily: Constants.fontFamily,
-                              fontSize: 26,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 118,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue, width: 2),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            "$coins",
-                            style: const TextStyle(
-                              fontFamily: Constants.fontFamily,
-                              fontSize: 24,
-                            ),
-                          ),
-                          const Icon(
-                            Icons.diamond,
-                            color: Colors.red,
-                          ),
-                        ],
-                      ),
-                    ),
+                    pointsWidget(player.points),
+                    levelWidget(player.level),
+                    diamondWidget(player.coins),
                   ],
                 ),
                 Row(
@@ -251,8 +168,8 @@ class _HangmanPageState extends State<HangmanPage> {
                         fixedSize: const Size(45, 45),
                       ),
                     ),
-                    Container(
-                      child: showTimerWidget(),
+                    TimerWidget(
+                      key: timerKey,
                     ),
                     IconButton(
                       onPressed: () {},
@@ -284,28 +201,7 @@ class _HangmanPageState extends State<HangmanPage> {
                           Game.gameTries >= 5, "assets/images/rl_black.png"),
                       figureImage(
                           Game.gameTries >= 6, "assets/images/ll_black.png"),
-                      Visibility(
-                        visible: showHint,
-                        child: Container(
-                          color: Colors.amber,
-                          height: 200,
-                          width: 300,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(hint),
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showHint = false;
-                                  });
-                                },
-                                child: Text("Ok"),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      showHintWidget(showHint, hint, setHintFalse),
                     ],
                   ),
                 ),
@@ -330,7 +226,7 @@ class _HangmanPageState extends State<HangmanPage> {
                     crossAxisSpacing: 8.0,
                     mainAxisSpacing: 8.0,
                     padding: const EdgeInsets.all(8.0),
-                    children: alphabet.map((e) {
+                    children: Game.alphabet.map((e) {
                       return RawMaterialButton(
                           onPressed:
                               isGameOver() || Game.selectedChar.contains(e)

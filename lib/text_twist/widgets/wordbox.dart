@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../text_twist_page.dart';
-
 class WordBox extends StatefulWidget {
   final String inputWord;
 

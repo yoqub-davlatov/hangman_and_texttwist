@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/hangman/utils/player.dart';
+import 'package:hangman_and_texttwist/hangman/UI/widget/fail_pass_widget.dart';
+import '../hangman/utils/player.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/hint_widget.dart';
 import '../hangman/UI/widget/level_widget.dart';
@@ -40,7 +41,8 @@ class _HangmanPageState extends State<HangmanPage> {
   }
 
   void getMessage() async {
-    final contentResponse = await APIService.getMessage(Game.message);
+    // final contentResponse = await APIService.getMessage(Game.message);
+    final contentResponse = await hangmanApiCall(Game.message);
     setState(() {
       showHint = true;
       word = contentResponse['word'].toString().toUpperCase();
@@ -75,19 +77,6 @@ class _HangmanPageState extends State<HangmanPage> {
       }
     }
     return true;
-  }
-
-  Widget showTimerWidget() {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return Text(
-      "$minutes:$seconds",
-      style: const TextStyle(
-        fontFamily: Constants.fontFamily,
-        fontSize: 30,
-      ),
-    );
   }
 
   Widget messageBar() {
@@ -277,7 +266,7 @@ class _HangmanPageState extends State<HangmanPage> {
               ],
             ),
           ),
-          if (isGameOver()) messageBar(),
+          if (isGameOver()) failPassWidget(context, isWordGuessed(), resetGame),
         ],
       ),
     );

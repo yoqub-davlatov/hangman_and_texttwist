@@ -1,10 +1,9 @@
 import 'package:dart_openai/dart_openai.dart';
 
-import '../env/env.dart';
 
 Future<List> apiCategoryCall(category) async {
   // Set the OpenAI API key from the .env file.
-  OpenAI.apiKey = Env.apiKey;
+  OpenAI.apiKey = "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";
 
   // Start using!
 

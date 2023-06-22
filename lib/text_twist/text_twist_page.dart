@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'widgets/letterbox.dart';
 import 'assets.dart';
@@ -18,7 +16,7 @@ class _TextTwistState extends State<TextTwist> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
+    // double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -61,7 +59,7 @@ class _TextTwistState extends State<TextTwist> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
-                 Positioned(
+                Positioned(
                   top: 30,
                   left: 20,
                   child: WordBox(
@@ -137,24 +135,15 @@ class _TextTwistState extends State<TextTwist> {
                     ),
                   ),
                 ),
-              ),
-              RawMaterialButton(
-                onPressed: () {
-                  print(WordsInfo.words);
-                  print(WordsInfo.letters);
-                },
-                fillColor: Colors.green.shade800,
-                constraints: BoxConstraints.tight(const Size(100, 45)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: const Text(
-                  "Submit",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontFamily: 'KristenITC',
-                    fontWeight: FontWeight.bold,
+                RawMaterialButton(
+                  onPressed: () {
+                    print(WordsInfo.words);
+                    print(WordsInfo.letters);
+                  },
+                  fillColor: Colors.green.shade800,
+                  constraints: BoxConstraints.tight(const Size(100, 45)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: const Text(
                     "Submit",
@@ -167,7 +156,7 @@ class _TextTwistState extends State<TextTwist> {
                   ),
                 )
               ],
-            )
+            ),
           ],
         ),
       ),

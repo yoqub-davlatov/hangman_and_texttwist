@@ -19,13 +19,16 @@ Widget showHintWidget(bool showHint, final String hint, final callBack) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(
-            hint,
-            style: const TextStyle(
-              fontFamily: Constants.fontFamily,
-              fontSize: 24,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              hint,
+              style: const TextStyle(
+                fontFamily: Constants.fontFamily,
+                fontSize: 20,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
           ElevatedButton(
             onPressed: callBack,

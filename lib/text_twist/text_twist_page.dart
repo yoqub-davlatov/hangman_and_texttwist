@@ -101,7 +101,10 @@ class _TextTwistState extends State<TextTwist> {
                 ),
               ),
               RawMaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  print(WordsInfo.words);
+                  print(WordsInfo.letters);
+                },
                 fillColor: Colors.green.shade800,
                 constraints: BoxConstraints.tight(const Size(100, 45)),
                 shape: RoundedRectangleBorder(

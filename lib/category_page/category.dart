@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants/constants.dart';
 import '../text_twist/text_twist_page.dart';
 import '../category_page/category_button.dart';
 import '../constants/games.dart';
 import '../hangman/hangman_page.dart';
+import '../services/api_test.dart';
+import '../text_twist/assets.dart';
+import 'category_settings.dart';
 
 class CategoryPage extends StatefulWidget {
   final Games game;
+
   const CategoryPage({Key? key, required this.game}) : super(key: key);
 
   @override
@@ -14,6 +19,52 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
+  callbackSetSelected() {
+    setState(() {});
+  }
+
+  Future getWords() async {
+    if (Settings.inputCategoryController.text.isNotEmpty) {
+      WordsInfo.words =
+          await apiCategoryCall(Settings.inputCategoryController.text.trim());
+    } else {
+      WordsInfo.words = await apiCategoryCall(Settings.selected);
+    }
+  }
+
+  Future<void> setUpTextTwist() async {
+    await getWords();
+    WordsInfo.words = WordsInfo.words.map((e) => e.toLowerCase()).toList();
+    Map<String, int> letterCounts = {};
+    List<String> dict = [];
+    for (String word in WordsInfo.words) {
+      Map<String, int> tempCounts = {};
+      for (int i = 0; i < word.length; i++) {
+        String letter = word[i];
+        tempCounts[letter] =
+            tempCounts.containsKey(letter) ? tempCounts[letter]! + 1 : 1;
+      }
+      for (String key in tempCounts.keys) {
+        if (letterCounts.containsKey(key)) {
+          if (letterCounts[key]! < tempCounts[key]!) {
+            for (int i = 0; i < tempCounts[key]! - letterCounts[key]!; i++) {
+              dict.add(key);
+            }
+            letterCounts[key] = tempCounts[key]!;
+          }
+        }
+        else {
+          for (int i = 0; i < tempCounts[key]!; i++) {
+            dict.add(key);
+          }
+          letterCounts[key] = tempCounts[key]!;
+        }
+      }
+    }
+
+    WordsInfo.letters = dict;
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -51,71 +102,78 @@ class _CategoryPageState extends State<CategoryPage> {
                     height: screenHeight * 0.8,
                     width: screenWidth * 0.9,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        categoryButton("Food"),
-                        categoryButton("Anime"),
-                        categoryButton("Drinks"),
-                        categoryButton("Astronomy"),
-                        categoryButton("History"),
-                        const Text(
-                          "Wanna use your own category?\nNo problem",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: Constants.fontFamily,
-                          ),
-                        ),
-                        SizedBox(
-                          width: screenWidth * 0.7,
-                          height: screenHeight * 0.06,
-                          child: TextFormField(
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontFamily: Constants.fontFamily,
-                              color: Color(0xff42B462),
-                            ),
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: const BorderSide(
-                                  color: Color(0xff3E87FF),
-                                  width: 3.0,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: List<Widget>.from(
+                                Settings.categoriesList.map((e) {
+                              return categoryButton(e, Settings.selected == e,
+                                  callbackSetSelected);
+                            }).toList()) +
+                            List<Widget>.from([
+                              const Text(
+                                "Wanna use your own category?\nNo problem",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: Constants.fontFamily,
                                 ),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: const BorderSide(
-                                  color: Color(0xff3E87FF),
-                                  width: 3.0,
+                              SizedBox(
+                                width: screenWidth * 0.7,
+                                height: screenHeight * 0.06,
+                                child: TextFormField(
+                                  onChanged: (text) {
+                                    setState(() {
+                                      Settings.selected = "";
+                                    });
+                                  },
+                                  controller: Settings.inputCategoryController,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontFamily: Constants.fontFamily,
+                                    color: Color(0xff42B462),
+                                  ),
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 0.0),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xff3E87FF),
+                                        width: 3.0,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xff3E87FF),
+                                        width: 3.0,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xff3E87FF),
+                                        width: 3.0,
+                                      ),
+                                    ),
+                                    hintText: "Enter your category",
+                                    hintStyle: const TextStyle(
+                                      fontSize: 22,
+                                      fontFamily: Constants.fontFamily,
+                                      color: Color.fromRGBO(66, 180, 98, 0.5),
+                                    ),
+                                  ),
                                 ),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: const BorderSide(
-                                  color: Color(0xff3E87FF),
-                                  width: 3.0,
-                                ),
-                              ),
-                              hintText: "Enter your category",
-                              hintStyle: const TextStyle(
-                                fontSize: 22,
-                                fontFamily: Constants.fontFamily,
-                                color: Color.fromRGBO(66, 180, 98, 0.5),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                            ])),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   OutlinedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await setUpTextTwist();
                       Navigator.push(
                         context,
                         MaterialPageRoute(

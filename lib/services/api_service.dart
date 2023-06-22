@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
-
+import '../env/env.dart';
 import 'package:http/http.dart' as http;
 
 class APIService {
   static Future<Map> getMessage(final String prompt) async {
     try {
       String url = "https://api.openai.com/v1/chat/completions";
-      String openAIkey = YOUR_OPENAI_KEY;
+      String openAIkey = Env.apiKey;
       var response = await http.post(
         Uri.parse(url),
         headers: {

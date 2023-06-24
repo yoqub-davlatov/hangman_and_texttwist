@@ -10,4 +10,7 @@ class WordsInfo {
   static String getWord() {
     return typedLetters.join().toLowerCase();
   }
+  static void shuffleKeyBoard() {
+    letters.shuffle();
+  }
 }

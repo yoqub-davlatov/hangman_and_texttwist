@@ -14,10 +14,17 @@ class TextTwist extends StatefulWidget {
 
 class _TextTwistState extends State<TextTwist> {
   String input = "";
+
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -46,13 +53,17 @@ class _TextTwistState extends State<TextTwist> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(),
-            const StopWatch(), // Timer widget, think about stopping it when the word is guessed
+            const StopWatch(),
+            // Timer widget, think about stopping it when the word is guessed
             Stack(
               children: [
                 Container(
                   alignment: Alignment.center,
                   height: height * 0.45,
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.9,
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     border: Border.all(color: Colors.blue, width: 2),
@@ -112,6 +123,7 @@ class _TextTwistState extends State<TextTwist> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,
+              // direction: Axis.horizontal,
               children: [
                 RawMaterialButton(
                   fillColor: Colors.red.shade800,
@@ -136,33 +148,51 @@ class _TextTwistState extends State<TextTwist> {
                     ),
                   ),
                 ),
-              ],
-            ),
-            RawMaterialButton(
-              onPressed: () {
-                print(WordsInfo.words);
-                print(WordsInfo.letters);
-                setState(() {
-                  input = WordsInfo.getWord();
-                  WordsInfo.typedLetters =
-                      WordsInfo.typedLetters.map((_) => '').toList();
-                  WordsInfo.index = 0;
-                });
-              },
-              fillColor: Colors.green.shade800,
-              constraints: BoxConstraints.tight(const Size(100, 45)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: const Text(
-                "Submit",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontFamily: 'KristenITC',
-                  fontWeight: FontWeight.bold,
+                RawMaterialButton(
+                  fillColor: Colors.blueGrey,
+                  constraints: BoxConstraints.tight(const Size(45, 45)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: const Icon(
+                    Icons.refresh,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      WordsInfo.shuffleKeyBoard();
+                    });
+                },
+
                 ),
-              ),
+                RawMaterialButton(
+                  onPressed: () {
+                    print(WordsInfo.words);
+                    print(WordsInfo.letters);
+                    setState(() {
+                      input = WordsInfo.getWord();
+                      WordsInfo.typedLetters =
+                          WordsInfo.typedLetters.map((_) => '').toList();
+                      WordsInfo.index = 0;
+                    });
+                  },
+                  fillColor: Colors.green.shade800,
+                  constraints: BoxConstraints.tight(const Size(100, 45)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontFamily: 'KristenITC',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

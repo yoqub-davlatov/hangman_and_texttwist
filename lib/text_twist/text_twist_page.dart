@@ -86,7 +86,7 @@ class _TextTwistState extends State<TextTwist> {
               children: WordsInfo.typedLetters.map((e) {
                 return Container(
                     padding: const EdgeInsets.all(2.0),
-                    child: letter(e, e != ''));
+                    child: letter(e.letter, e.letter != ''));
               }).toList(),
             ),
             Wrap(
@@ -110,7 +110,7 @@ class _TextTwistState extends State<TextTwist> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Text(
-                      e,
+                      e.letter,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 30,
@@ -130,7 +130,7 @@ class _TextTwistState extends State<TextTwist> {
                   onPressed: () {
                     setState(() {
                       WordsInfo.typedLetters =
-                          WordsInfo.typedLetters.map((_) => '').toList();
+                          WordsInfo.typedLetters.map((e) => LetterElem("")).toList();
                       WordsInfo.index = 0;
                     });
                   },
@@ -169,11 +169,11 @@ class _TextTwistState extends State<TextTwist> {
                 RawMaterialButton(
                   onPressed: () {
                     print(WordsInfo.words);
-                    print(WordsInfo.letters);
+                    print(WordsInfo.letters.map((e) => e.letter).toList());
                     setState(() {
                       input = WordsInfo.getWord();
                       WordsInfo.typedLetters =
-                          WordsInfo.typedLetters.map((_) => '').toList();
+                          WordsInfo.typedLetters.map((e) => LetterElem("")).toList();
                       WordsInfo.index = 0;
                     });
                   },

@@ -1,35 +1,89 @@
 import 'package:flutter/material.dart';
-import './UI/colors.dart';
-import './UI/widget/figure_image.dart';
-import './UI/widget/letter.dart';
-import './utils/Game.dart';
+import '../hangman/UI/widget/fail_pass_widget.dart';
+import '../hangman/utils/player.dart';
+import '../hangman/UI/widget/TimerWidget.dart';
+import '../hangman/UI/widget/hint_widget.dart';
+import '../hangman/UI/widget/level_widget.dart';
+import '../hangman/UI/widget/show_hint_widget.dart';
+import '../services/api_service.dart';
+import '../constants/constants.dart';
+import 'UI/widget/figure_image.dart';
+import 'UI/widget/letter.dart';
+import 'utils/Game.dart';
+import 'UI/widget/points_widget.dart';
 
 class HangmanPage extends StatefulWidget {
-  const HangmanPage({super.key});
+  final String category;
+  const HangmanPage({super.key, required this.category});
 
   @override
   State<HangmanPage> createState() => _HangmanPageState();
 }
 
 class _HangmanPageState extends State<HangmanPage> {
-  String word = 'Flutter'.toUpperCase();
-  final List<String> alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').toList();
+  bool isFetching = true;
+  bool hintPressed = false;
+  GlobalKey<TimerWidgetState> timerKey = GlobalKey();
+  late String prompt = Game.getPrompt(widget.category);
+
+  Player player = Player();
+
+  @override
+  void initState() {
+    super.initState();
+    getMessage();
+  }
+
+  @override
+  void dispose() {
+    timerKey.currentState?.dispose();
+    super.dispose();
+  }
+
+  bool showHint = true;
+  void setHintFalse() {
+    setState(() {
+      showHint = false;
+      hintPressed = true;
+    });
+  }
+
+  void getMessage() async {
+    isFetching = true;
+    showHint = true;
+    // final contentResponse = await APIService.getMessage(Game.message);
+    final contentResponse = await hangmanApiCall(prompt);
+    setState(() {
+      isFetching = false;
+      timerKey.currentState?.restartTimer();
+      Game.word = contentResponse['word'].toString().toUpperCase();
+      Game.hint = contentResponse['hint'];
+    });
+  }
 
   bool isGameOver() {
     return Game.gameTries >= 6 || isWordGuessed();
   }
 
   void resetGame() {
+    if (isWordGuessed()) {
+      player.level++;
+      player.points += (6 - Game.gameTries) * 100;
+      player.coins++;
+    } else {
+      player.level = 1;
+    }
     setState(() {
-      word = 'Flutter'
-          .toUpperCase(); // replace this line with your word generating logic if you want different words each time
+      getMessage();
+      hintPressed = false;
       Game.selectedChar = [];
       Game.gameTries = 0;
+      // timerKey.currentState?.restartTimer();
     });
   }
 
   bool isWordGuessed() {
-    for (var letter in word.split('')) {
+    for (var letter in Game.word.split('')) {
       if (!Game.selectedChar.contains(letter)) {
         return false;
       }
@@ -37,158 +91,164 @@ class _HangmanPageState extends State<HangmanPage> {
     return true;
   }
 
+  Widget levelEnds() {
+    timerKey.currentState?.stopTimer();
+    return failPassWidget(context, isWordGuessed(), resetGame);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryColor,
       appBar: AppBar(
         title: const Text(
           "Hangman",
           style: TextStyle(
             color: Colors.white,
-            fontFamily: "KristenITC",
+            fontFamily: Constants.fontFamily,
             fontSize: 30,
           ),
         ),
+        backgroundColor: Colors.blue,
         centerTitle: true,
         elevation: 0,
-        backgroundColor: AppColors.primaryColor,
       ),
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  "assets/images/my_background_image.png",
+          AbsorbPointer(
+            absorbing: !hintPressed,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    Constants.bckgrImagePath,
+                  ),
+                  fit: BoxFit.fill,
                 ),
-                fit: BoxFit.fill,
               ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                  child: Stack(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      figureImage(
-                          Game.gameTries >= 0, "assets/images/hang_black.png"),
-                      figureImage(
-                          Game.gameTries >= 1, "assets/images/head_black.png"),
-                      figureImage(
-                          Game.gameTries >= 2, "assets/images/body_black.png"),
-                      figureImage(
-                          Game.gameTries >= 3, "assets/images/ra_black.png"),
-                      figureImage(
-                          Game.gameTries >= 4, "assets/images/la_black.png"),
-                      figureImage(
-                          Game.gameTries >= 5, "assets/images/rl_black.png"),
-                      figureImage(
-                          Game.gameTries >= 6, "assets/images/ll_black.png"),
+                      pointsWidget(player.points),
+                      levelWidget(player.level),
+                      diamondWidget(player.coins),
                     ],
                   ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 3.0,
-                    runSpacing: 3.0,
-                    children: word
-                        .split('')
-                        .map((e) => letter(e.toUpperCase(),
-                            !Game.selectedChar.contains(e.toUpperCase())))
-                        .toList(),
-                  ),
-                ),
-                const SizedBox(
-                  height: 12.0,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 250,
-                  child: GridView.count(
-                    crossAxisCount: 7,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                    padding: const EdgeInsets.all(8.0),
-                    children: alphabet.map((e) {
-                      return RawMaterialButton(
-                          onPressed:
-                              isGameOver() || Game.selectedChar.contains(e)
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        Game.selectedChar.add(e);
-                                        if (!word
-                                            .split('')
-                                            .contains(e.toUpperCase())) {
-                                          Game.gameTries++;
-                                        }
-                                      });
-                                    },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          fillColor: Game.selectedChar.contains(e)
-                              ? word.split('').contains(e.toUpperCase())
-                                  ? Colors.green
-                                  : Colors.black
-                              : Colors.blue,
-                          child: Text(
-                            e,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontFamily: 'KristenITC',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ));
-                    }).toList(),
-                  ),
-                )
-              ],
-            ),
-          ),
-          if (isGameOver())
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.black.withOpacity(0.8),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      isWordGuessed() ? 'You Passed!' : 'You Lost!',
-                      style: const TextStyle(
-                        fontSize: 48,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    TextButton(
-                      onPressed: resetGame,
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                      ),
-                      child: Text(
-                        isWordGuessed() ? 'Next Level' : 'Play Again',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          color: Colors.white,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.lightbulb,
+                          color: Colors.yellow[600],
+                        ),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.blue[400],
+                          fixedSize: const Size(45, 45),
                         ),
                       ),
+                      TimerWidget(
+                        key: timerKey,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.diamond,
+                          color: Colors.redAccent[700],
+                        ),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.blue[400],
+                          fixedSize: const Size(45, 45),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Center(
+                    child: Stack(
+                      children: [
+                        figureImage(Game.gameTries >= 0,
+                            "assets/images/hang_black.png"),
+                        figureImage(Game.gameTries >= 1,
+                            "assets/images/head_black.png"),
+                        figureImage(Game.gameTries >= 2,
+                            "assets/images/body_black.png"),
+                        figureImage(
+                            Game.gameTries >= 3, "assets/images/ra_black.png"),
+                        figureImage(
+                            Game.gameTries >= 4, "assets/images/la_black.png"),
+                        figureImage(
+                            Game.gameTries >= 5, "assets/images/rl_black.png"),
+                        figureImage(
+                            Game.gameTries >= 6, "assets/images/ll_black.png"),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 3.0,
+                      runSpacing: 3.0,
+                      children: Game.word
+                          .split('')
+                          .map((e) => letter(e.toUpperCase(),
+                              !Game.selectedChar.contains(e.toUpperCase())))
+                          .toList(),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 200,
+                    child: GridView.count(
+                      crossAxisCount: 8,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      padding: const EdgeInsets.all(8.0),
+                      children: Game.alphabet.map((e) {
+                        return RawMaterialButton(
+                            onPressed:
+                                isGameOver() || Game.selectedChar.contains(e)
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          Game.selectedChar.add(e);
+                                          if (!Game.word
+                                              .split('')
+                                              .contains(e.toUpperCase())) {
+                                            Game.gameTries++;
+                                          }
+                                        });
+                                      },
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            fillColor: Game.selectedChar.contains(e)
+                                ? Game.word.split('').contains(e.toUpperCase())
+                                    ? Colors.green
+                                    : Colors.black
+                                : Colors.blue,
+                            child: Text(
+                              e,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontFamily: Constants.fontFamily,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ));
+                      }).toList(),
+                    ),
+                  )
+                ],
               ),
             ),
+          ),
+          if (isGameOver()) levelEnds(),
+          showHintWidget(isFetching, showHint, Game.hint, setHintFalse),
         ],
       ),
     );

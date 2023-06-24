@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import '../colors.dart';
+import '../../../constants/constants.dart';
 
 Widget letter(String character, bool hidden) {
   return Container(
-    height: 65,
+    alignment: Alignment.center,
+    height: 50,
     width: 50,
-    padding: const EdgeInsets.all(12.0),
     decoration: BoxDecoration(
-      color: AppColors.primaryColorDark,
+      color: hidden ? Colors.white : Colors.green,
+      border: Border.all(
+        color: Colors.blue,
+        width: 2,
+      ),
       borderRadius: BorderRadius.circular(4.0),
     ),
     child: Visibility(
@@ -17,8 +21,8 @@ Widget letter(String character, bool hidden) {
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
-          fontFamily: 'KristenITC',
-          fontSize: 30.0,
+          fontFamily: Constants.fontFamily,
+          fontSize: 25.0,
         ),
       ),
     ),

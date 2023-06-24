@@ -17,7 +17,6 @@ class TimerWidgetState extends State<TimerWidget> {
   @override
   void initState() {
     super.initState();
-    startTimer();
   }
 
   @override
@@ -45,10 +44,12 @@ class TimerWidgetState extends State<TimerWidget> {
       return;
     }
     void addSecond() {
-      setState(() {
-        final seconds = duration.inSeconds + 1;
-        duration = Duration(seconds: seconds);
-      });
+      if(mounted) {
+        setState(() {
+          final seconds = duration.inSeconds + 1;
+          duration = Duration(seconds: seconds);
+        });
+      }
     }
 
     timer = Timer.periodic(const Duration(seconds: 1), (_) => addSecond());

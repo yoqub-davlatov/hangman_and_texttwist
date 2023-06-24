@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/hangman/UI/widget/fail_pass_widget.dart';
+import '../hangman/UI/widget/fail_pass_widget.dart';
 import '../hangman/utils/player.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/hint_widget.dart';
@@ -21,6 +21,8 @@ class HangmanPage extends StatefulWidget {
 }
 
 class _HangmanPageState extends State<HangmanPage> {
+  bool isFetching = true;
+  bool hintPressed = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
   late String prompt = Game.getPrompt(widget.category);
 
@@ -32,18 +34,28 @@ class _HangmanPageState extends State<HangmanPage> {
     getMessage();
   }
 
+  @override
+  void dispose() {
+    timerKey.currentState?.dispose();
+    super.dispose();
+  }
+
   bool showHint = true;
   void setHintFalse() {
     setState(() {
       showHint = false;
+      hintPressed = true;
     });
   }
 
   void getMessage() async {
+    isFetching = true;
+    showHint = true;
     // final contentResponse = await APIService.getMessage(Game.message);
     final contentResponse = await hangmanApiCall(prompt);
     setState(() {
-      showHint = true;
+      isFetching = false;
+      timerKey.currentState?.restartTimer();
       Game.word = contentResponse['word'].toString().toUpperCase();
       Game.hint = contentResponse['hint'];
     });
@@ -63,9 +75,10 @@ class _HangmanPageState extends State<HangmanPage> {
     }
     setState(() {
       getMessage();
+      hintPressed = false;
       Game.selectedChar = [];
       Game.gameTries = 0;
-      timerKey.currentState?.restartTimer();
+      // timerKey.currentState?.restartTimer();
     });
   }
 
@@ -76,6 +89,11 @@ class _HangmanPageState extends State<HangmanPage> {
       }
     }
     return true;
+  }
+
+  Widget levelEnds() {
+    timerKey.currentState?.stopTimer();
+    return failPassWidget(context, isWordGuessed(), resetGame);
   }
 
   @override
@@ -96,138 +114,141 @@ class _HangmanPageState extends State<HangmanPage> {
       ),
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  Constants.bckgrImagePath,
+          AbsorbPointer(
+            absorbing: !hintPressed,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    Constants.bckgrImagePath,
+                  ),
+                  fit: BoxFit.fill,
                 ),
-                fit: BoxFit.fill,
               ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    pointsWidget(player.points),
-                    levelWidget(player.level),
-                    diamondWidget(player.coins),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.lightbulb,
-                        color: Colors.yellow[600],
-                      ),
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.blue[400],
-                        fixedSize: const Size(45, 45),
-                      ),
-                    ),
-                    TimerWidget(
-                      key: timerKey,
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.diamond,
-                        color: Colors.redAccent[700],
-                      ),
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.blue[400],
-                        fixedSize: const Size(45, 45),
-                      ),
-                    ),
-                  ],
-                ),
-                Center(
-                  child: Stack(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      figureImage(
-                          Game.gameTries >= 0, "assets/images/hang_black.png"),
-                      figureImage(
-                          Game.gameTries >= 1, "assets/images/head_black.png"),
-                      figureImage(
-                          Game.gameTries >= 2, "assets/images/body_black.png"),
-                      figureImage(
-                          Game.gameTries >= 3, "assets/images/ra_black.png"),
-                      figureImage(
-                          Game.gameTries >= 4, "assets/images/la_black.png"),
-                      figureImage(
-                          Game.gameTries >= 5, "assets/images/rl_black.png"),
-                      figureImage(
-                          Game.gameTries >= 6, "assets/images/ll_black.png"),
-                      showHintWidget(showHint, Game.hint, setHintFalse),
+                      pointsWidget(player.points),
+                      levelWidget(player.level),
+                      diamondWidget(player.coins),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 3.0,
-                    runSpacing: 3.0,
-                    children: Game.word
-                        .split('')
-                        .map((e) => letter(e.toUpperCase(),
-                            !Game.selectedChar.contains(e.toUpperCase())))
-                        .toList(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.lightbulb,
+                          color: Colors.yellow[600],
+                        ),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.blue[400],
+                          fixedSize: const Size(45, 45),
+                        ),
+                      ),
+                      TimerWidget(
+                        key: timerKey,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.diamond,
+                          color: Colors.redAccent[700],
+                        ),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.blue[400],
+                          fixedSize: const Size(45, 45),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 200,
-                  child: GridView.count(
-                    crossAxisCount: 8,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
+                  Center(
+                    child: Stack(
+                      children: [
+                        figureImage(Game.gameTries >= 0,
+                            "assets/images/hang_black.png"),
+                        figureImage(Game.gameTries >= 1,
+                            "assets/images/head_black.png"),
+                        figureImage(Game.gameTries >= 2,
+                            "assets/images/body_black.png"),
+                        figureImage(
+                            Game.gameTries >= 3, "assets/images/ra_black.png"),
+                        figureImage(
+                            Game.gameTries >= 4, "assets/images/la_black.png"),
+                        figureImage(
+                            Game.gameTries >= 5, "assets/images/rl_black.png"),
+                        figureImage(
+                            Game.gameTries >= 6, "assets/images/ll_black.png"),
+                      ],
+                    ),
+                  ),
+                  Padding(
                     padding: const EdgeInsets.all(8.0),
-                    children: Game.alphabet.map((e) {
-                      return RawMaterialButton(
-                          onPressed:
-                              isGameOver() || Game.selectedChar.contains(e)
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        Game.selectedChar.add(e);
-                                        if (!Game.word
-                                            .split('')
-                                            .contains(e.toUpperCase())) {
-                                          Game.gameTries++;
-                                        }
-                                      });
-                                    },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          fillColor: Game.selectedChar.contains(e)
-                              ? Game.word.split('').contains(e.toUpperCase())
-                                  ? Colors.green
-                                  : Colors.black
-                              : Colors.blue,
-                          child: Text(
-                            e,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontFamily: Constants.fontFamily,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ));
-                    }).toList(),
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 3.0,
+                      runSpacing: 3.0,
+                      children: Game.word
+                          .split('')
+                          .map((e) => letter(e.toUpperCase(),
+                              !Game.selectedChar.contains(e.toUpperCase())))
+                          .toList(),
+                    ),
                   ),
-                )
-              ],
+                  SizedBox(
+                    width: double.infinity,
+                    height: 200,
+                    child: GridView.count(
+                      crossAxisCount: 8,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      padding: const EdgeInsets.all(8.0),
+                      children: Game.alphabet.map((e) {
+                        return RawMaterialButton(
+                            onPressed:
+                                isGameOver() || Game.selectedChar.contains(e)
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          Game.selectedChar.add(e);
+                                          if (!Game.word
+                                              .split('')
+                                              .contains(e.toUpperCase())) {
+                                            Game.gameTries++;
+                                          }
+                                        });
+                                      },
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            fillColor: Game.selectedChar.contains(e)
+                                ? Game.word.split('').contains(e.toUpperCase())
+                                    ? Colors.green
+                                    : Colors.black
+                                : Colors.blue,
+                            child: Text(
+                              e,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontFamily: Constants.fontFamily,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ));
+                      }).toList(),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-          if (isGameOver()) failPassWidget(context, isWordGuessed(), resetGame),
+          if (isGameOver()) levelEnds(),
+          showHintWidget(isFetching, showHint, Game.hint, setHintFalse),
         ],
       ),
     );

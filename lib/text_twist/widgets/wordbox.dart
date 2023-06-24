@@ -72,7 +72,9 @@ class _WordBoxState extends State<WordBox> {
 
   bool isGuessed(String inputWord, String currentWord) {
     if (guessed.contains(currentWord) || inputWord == currentWord) {
-      guessed.add(inputWord);
+      if (inputWord == currentWord) {
+        guessed.add(inputWord);
+      }
       return true;
 
     }

@@ -52,8 +52,7 @@ class _CategoryPageState extends State<CategoryPage> {
             }
             letterCounts[key] = tempCounts[key]!;
           }
-        }
-        else {
+        } else {
           for (int i = 0; i < tempCounts[key]!; i++) {
             dict.add(key);
           }
@@ -202,7 +201,9 @@ class _CategoryPageState extends State<CategoryPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => widget.game == Games.hangman
-                                ? HangmanPage(category: Settings.selected,)
+                                ? HangmanPage(
+                                    category: Settings.selected,
+                                  )
                                 : const TextTwist()),
                       );
                     },

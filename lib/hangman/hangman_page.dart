@@ -25,6 +25,7 @@ class _HangmanPageState extends State<HangmanPage> {
   bool hintPressed = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
   late String prompt = Game.getPrompt(widget.category);
+  late String hintPrompt = Game.getHintPrompt();
 
   Player player = Player();
 
@@ -57,6 +58,14 @@ class _HangmanPageState extends State<HangmanPage> {
       isFetching = false;
       timerKey.currentState?.restartTimer();
       Game.word = contentResponse['word'].toString().toUpperCase();
+      Game.hint = contentResponse['hint'];
+    });
+  }
+
+  getHint() async {
+    final contentResponse = await hangmanApiCall(Game.getHintPrompt());
+    setState(() {
+      isFetching = false;
       Game.hint = contentResponse['hint'];
     });
   }
@@ -141,7 +150,14 @@ class _HangmanPageState extends State<HangmanPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          setState(() {
+                            hintPressed = false;
+                            isFetching = true;
+                            showHint = true;
+                          });
+                          await getHint();
+                        },
                         icon: Icon(
                           Icons.lightbulb,
                           color: Colors.yellow[600],

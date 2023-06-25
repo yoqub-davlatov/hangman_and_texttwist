@@ -15,6 +15,7 @@ class _WordBoxState extends State<WordBox> {
 
   @override
   Widget build(BuildContext context) {
+    print(guessed);
     String inputWord = widget.inputWord;
     List<String> words = widget.words.map((e) => e.toString()).toList();
     return Column(
@@ -71,8 +72,11 @@ class _WordBoxState extends State<WordBox> {
 
   bool isGuessed(String inputWord, String currentWord) {
     if (guessed.contains(currentWord) || inputWord == currentWord) {
-      guessed.add(inputWord);
+      if (inputWord == currentWord) {
+        guessed.add(inputWord);
+      }
       return true;
+
     }
     return false;
   }

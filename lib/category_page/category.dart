@@ -22,7 +22,7 @@ class _CategoryPageState extends State<CategoryPage> {
     setState(() {});
   }
 
-  Future getWords() async {
+  Future requestWords() async {
     if (Settings.inputCategoryController.text.isNotEmpty) {
       WordsInfo.words =
           await apiCategoryCall(Settings.inputCategoryController.text.trim());
@@ -32,9 +32,11 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   Future<void> setUpTextTwist() async {
-    await getWords();
+    await requestWords();
 
     WordsInfo.words = WordsInfo.words.map((e) => e.toLowerCase()).toList();
+    WordsInfo.words =
+        WordsInfo.words.map((string) => string.replaceAll('.', '')).toList();
     Map<String, int> letterCounts = {};
     List<String> dict = [];
     for (String word in WordsInfo.words) {
@@ -60,9 +62,8 @@ class _CategoryPageState extends State<CategoryPage> {
         }
       }
     }
-    dict.removeLast();
     dict.shuffle();
-    WordsInfo.letters = dict;
+    WordsInfo.letters = dict.map((e) => LetterElem(e)).toList();
   }
 
   @override

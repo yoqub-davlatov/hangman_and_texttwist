@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/constants/constants.dart';
+import '../../../constants/constants.dart';
 
 import '../../utils/Game.dart';
 

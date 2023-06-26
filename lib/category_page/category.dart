@@ -205,7 +205,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                 ? HangmanPage(
                                     category: Settings.selected,
                                   )
-                                : const TextTwist()),
+                                : TextTwist(category: Settings.selected)),
                       );
                     },
                     style: OutlinedButton.styleFrom(

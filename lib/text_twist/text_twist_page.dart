@@ -88,7 +88,6 @@ class _TextTwistState extends State<TextTwist> {
     setState(() {
       isGiveUp1 = false;
       isGiveUp2 = true;
-
     });
   }
 
@@ -111,11 +110,17 @@ class _TextTwistState extends State<TextTwist> {
             ),
             Visibility(
               visible: !isGiveUp2,
-              child: IconButton(
-                  onPressed: () {
-                    giveup();
-                  },
-                  icon: Icon(Icons.vpn_key)),
+              child: TextButton(
+                onPressed: () {
+                  giveup();
+                },
+                child: const Text("""Give\n  up""",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: "KristenITC",
+                      fontSize: 15,
+                    )),
+              ),
             ),
           ],
         ),

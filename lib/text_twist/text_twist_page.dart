@@ -130,213 +130,203 @@ class _TextTwistState extends State<TextTwist> {
       ),
       body: Stack(
         children: [
-          AbsorbPointer(
-            absorbing: !hintPressed && !isGiveUp1,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    Constants.bckgrImagePath,
-                  ),
-                  fit: BoxFit.fill,
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  Constants.bckgrImagePath,
                 ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      pointsWidget(player.points),
-                      levelWidget(player.level),
-                      diamondWidget(player.coins),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          setState(() {
-                            hintPressed = false;
-                            isFetching = true;
-                            showHint = true;
-                          });
-                          await getHint();
-                        },
-                        icon: Icon(
-                          Icons.lightbulb,
-                          color: Colors.yellow[600],
-                        ),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.blue[400],
-                          fixedSize: const Size(45, 45),
-                        ),
-                      ),
-                      const StopWatch(),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.diamond,
-                          color: Colors.redAccent[700],
-                        ),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.blue[400],
-                          fixedSize: const Size(45, 45),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Timer widget, think about stopping it when the word is guessed
-                  Stack(
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        height: height * 0.45,
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          border: Border.all(color: Colors.blue, width: 2),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      Positioned(
-                        top: 30,
-                        left: 20,
-                        child: WordBox(
-                          inputWord: input,
-                          words: WordsInfo.words,
-                        ),
-                      ),
-                    ],
-                  ),
-                  // WordBox widget
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: WordsInfo.typedLetters.map((e) {
-                      return Container(
-                          padding: const EdgeInsets.all(2.0),
-                          child: letter(e.letter, e.letter != ''));
-                    }).toList(),
-                  ),
-                  Wrap(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    // mainAxisSize: MainAxisSize.min,
-                    children: WordsInfo.letters.map((e) {
-                      return RawMaterialButton(
-                          onPressed: () {
-                            setState(() {
-                              if (!WordsInfo.typedLetters.contains(e)) {
-                                WordsInfo.typedLetters[WordsInfo.index] = e;
-                                WordsInfo.index++;
-                              }
-                            });
-                          },
-                          fillColor: WordsInfo.typedLetters.contains(e)
-                              ? Colors.white
-                              : Colors.blue,
-                          constraints: BoxConstraints.tight(const Size(40, 40)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Text(
-                            e.letter,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontFamily: 'KristenITC',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ));
-                    }).toList(),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.max,
-                    // direction: Axis.horizontal,
-                    children: [
-                      RawMaterialButton(
-                        fillColor: Colors.red.shade800,
-                        onPressed: () {
-                          setState(() {
-                            WordsInfo.typedLetters = WordsInfo.typedLetters
-                                .map((e) => LetterElem(""))
-                                .toList();
-                            WordsInfo.index = 0;
-                          });
-                        },
-                        constraints: BoxConstraints.tight(const Size(100, 45)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: const Text(
-                          "Clear",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 26,
-                            fontFamily: 'KristenITC',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      RawMaterialButton(
-                        fillColor: Colors.blueGrey,
-                        constraints: BoxConstraints.tight(const Size(45, 45)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: const Icon(
-                          Icons.refresh,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            WordsInfo.shuffleKeyBoard();
-                          });
-                        },
-                      ),
-                      RawMaterialButton(
-                        onPressed: () {
-                          print(WordsInfo.words);
-                          print(
-                              WordsInfo.letters.map((e) => e.letter).toList());
-                          setState(() {
-                            input = WordsInfo.getWord();
-                            WordsInfo.typedLetters = WordsInfo.typedLetters
-                                .map((e) => LetterElem(""))
-                                .toList();
-                            WordsInfo.index = 0;
-                          });
-                        },
-                        fillColor: Colors.green.shade800,
-                        constraints: BoxConstraints.tight(const Size(100, 45)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: const Text(
-                          "Submit",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 26,
-                            fontFamily: 'KristenITC',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                fit: BoxFit.fill,
               ),
             ),
-          ),
-          showHintWidget(isFetching, showHint, Game.hint, setHintFalse),
-          showGiveUpWidget(
-            isGiveUp1,
-            setGiveUpFalse,
-            setGiveUpTrue,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    pointsWidget(player.points),
+                    levelWidget(player.level),
+                    diamondWidget(player.coins),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        setState(() {
+                          // hintPressed = false;
+                          // isFetching = true;
+                          // showHint = true;
+                        });
+                        // await getHint();
+                      },
+                      icon: Icon(
+                        Icons.lightbulb,
+                        color: Colors.yellow[600],
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.blue[400],
+                        fixedSize: const Size(45, 45),
+                      ),
+                    ),
+                    const StopWatch(),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.diamond,
+                        color: Colors.redAccent[700],
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.blue[400],
+                        fixedSize: const Size(45, 45),
+                      ),
+                    ),
+                  ],
+                ),
+                // Timer widget, think about stopping it when the word is guessed
+                Stack(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      height: height * 0.45,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(color: Colors.blue, width: 2),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    Positioned(
+                      top: 30,
+                      left: 20,
+                      child: WordBox(
+                        inputWord: input,
+                        words: WordsInfo.words,
+                      ),
+                    ),
+                  ],
+                ),
+                // WordBox widget
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: WordsInfo.typedLetters.map((e) {
+                    return Container(
+                        padding: const EdgeInsets.all(2.0),
+                        child: letter(e.letter, e.letter != ''));
+                  }).toList(),
+                ),
+                Wrap(
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  // mainAxisSize: MainAxisSize.min,
+                  children: WordsInfo.letters.map((e) {
+                    return RawMaterialButton(
+                        onPressed: () {
+                          setState(() {
+                            if (!WordsInfo.typedLetters.contains(e)) {
+                              WordsInfo.typedLetters[WordsInfo.index] = e;
+                              WordsInfo.index++;
+                            }
+                          });
+                        },
+                        fillColor: WordsInfo.typedLetters.contains(e)
+                            ? Colors.white
+                            : Colors.blue,
+                        constraints: BoxConstraints.tight(const Size(40, 40)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Text(
+                          e.letter,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontFamily: 'KristenITC',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ));
+                  }).toList(),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
+                  // direction: Axis.horizontal,
+                  children: [
+                    RawMaterialButton(
+                      fillColor: Colors.red.shade800,
+                      onPressed: () {
+                        setState(() {
+                          WordsInfo.typedLetters = WordsInfo.typedLetters
+                              .map((e) => LetterElem(""))
+                              .toList();
+                          WordsInfo.index = 0;
+                        });
+                      },
+                      constraints: BoxConstraints.tight(const Size(100, 45)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: const Text(
+                        "Clear",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontFamily: 'KristenITC',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    RawMaterialButton(
+                      fillColor: Colors.blueGrey,
+                      constraints: BoxConstraints.tight(const Size(45, 45)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: const Icon(
+                        Icons.refresh,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          WordsInfo.shuffleKeyBoard();
+                        });
+                      },
+                    ),
+                    RawMaterialButton(
+                      onPressed: () {
+                        print(WordsInfo.words);
+                        print(WordsInfo.letters.map((e) => e.letter).toList());
+                        setState(() {
+                          input = WordsInfo.getWord();
+                          WordsInfo.typedLetters = WordsInfo.typedLetters
+                              .map((e) => LetterElem(""))
+                              .toList();
+                          WordsInfo.index = 0;
+                        });
+                      },
+                      fillColor: Colors.green.shade800,
+                      constraints: BoxConstraints.tight(const Size(100, 45)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: const Text(
+                        "Submit",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontFamily: 'KristenITC',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),

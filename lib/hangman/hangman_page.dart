@@ -40,24 +40,24 @@ class _HangmanPageState extends State<HangmanPage> {
     super.dispose();
   }
 
-  bool showHint = true;
-  void setHintFalse() {
+  bool showDescription = true;
+  void setDescriptionFalse() {
     setState(() {
-      showHint = false;
+      showDescription = false;
       hintPressed = true;
     });
   }
 
   void getMessage() async {
     isFetching = true;
-    showHint = true;
+    showDescription = true;
     // final contentResponse = await APIService.getMessage(Game.message);
     final contentResponse = await hangmanApiCall(prompt);
     setState(() {
       isFetching = false;
       timerKey.currentState?.restartTimer();
       Game.word = contentResponse['word'].toString().toUpperCase();
-      Game.hint = contentResponse['hint'];
+      Game.description = contentResponse['hint'];
     });
   }
 
@@ -155,10 +155,15 @@ class _HangmanPageState extends State<HangmanPage> {
                         key: timerKey,
                       ),
                       IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.diamond,
-                          color: Colors.redAccent[700],
+                        onPressed: () {
+                          setState(() {
+                            showDescription = true;
+                            hintPressed = false;
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.question_mark,
+                          color: Colors.red,
                         ),
                         style: IconButton.styleFrom(
                           backgroundColor: Colors.blue[400],
@@ -248,7 +253,8 @@ class _HangmanPageState extends State<HangmanPage> {
             ),
           ),
           if (isGameOver()) levelEnds(),
-          showHintWidget(isFetching, showHint, Game.hint, setHintFalse),
+          showHintWidget(
+              showDescription, Game.description, setDescriptionFalse),
         ],
       ),
     );

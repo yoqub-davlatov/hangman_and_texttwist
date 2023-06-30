@@ -18,12 +18,11 @@ class _WordBoxState extends State<WordBox> {
 
   @override
   Widget build(BuildContext context) {
-    print(guessed);
     String inputWord = widget.inputWord;
     List<String> words = widget.words.map((e) => e.toString()).toList();
     return Column(
       children: [
-        Container(
+        SizedBox(
           height: MediaQuery.of(context).size.height * 0.40,
           width: MediaQuery.of(context).size.width * 0.8,
           child: Wrap(

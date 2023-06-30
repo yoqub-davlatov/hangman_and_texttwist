@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
+import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/hint_widget.dart';
 import '../hangman/UI/widget/level_widget.dart';
 import '../hangman/UI/widget/points_widget.dart';
@@ -24,6 +25,11 @@ class TextTwist extends StatefulWidget {
 }
 
 class _TextTwistState extends State<TextTwist> {
+  callbackDeleteLetter() {
+    setState(() {
+
+    });
+  }
   bool isFetching = true;
   bool hintPressed = false;
   bool isGiveUp1 = false;
@@ -217,17 +223,21 @@ class _TextTwistState extends State<TextTwist> {
                     children: WordsInfo.typedLetters.map((e) {
                       return Container(
                           padding: const EdgeInsets.all(2.0),
-                          child: letter(e.letter, e.letter != ''));
+                          child: letter(e, e.letter != '', callbackDeleteLetter));
                     }).toList(),
                   ),
                   Wrap(
+                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    // mainAxisSize: MainAxisSize.min,
                     children: WordsInfo.letters.map((e) {
                       return RawMaterialButton(
                           onPressed: () {
                             setState(() {
-                              if (!WordsInfo.typedLetters.contains(e)) {
-                                WordsInfo.typedLetters[WordsInfo.index] = e;
-                                WordsInfo.index++;
+                              if (WordsInfo.index != WordsInfo.typedLetters.length) {
+                                if (!WordsInfo.typedLetters.contains(e)) {
+                                  WordsInfo.typedLetters[WordsInfo.index] = e;
+                                  WordsInfo.updateIndex();
+                                }
                               }
                             });
                           },

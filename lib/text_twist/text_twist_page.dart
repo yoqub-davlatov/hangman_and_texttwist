@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../hangman/UI/widget/TimerWidget.dart';
 import 'widgets/letterbox.dart';
 import 'assets.dart';
 import '../constants/constants.dart';
@@ -19,6 +20,12 @@ class _TextTwistState extends State<TextTwist> {
 
     });
   }
+  bool isFetching = true;
+  bool hintPressed = false;
+  bool isGiveUp1 = false;
+  GlobalKey<TimerWidgetState> timerKey = GlobalKey();
+
+
 
   String input = "";
 

@@ -12,6 +12,7 @@ import '../constants/constants.dart';
 import 'widgets/player.dart';
 import "widgets/stopwatch.dart";
 import 'widgets/wordbox.dart';
+import 'widgets/showGiveUpWidget.dart';
 
 class TextTwist extends StatefulWidget {
   final String category;
@@ -25,6 +26,7 @@ class TextTwist extends StatefulWidget {
 class _TextTwistState extends State<TextTwist> {
   bool isFetching = true;
   bool hintPressed = false;
+  bool isGiveUp1 = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
   late String prompt = Game.getPrompt(widget.category);
   late String hintPrompt = Game.getHintPrompt();
@@ -35,6 +37,8 @@ class _TextTwistState extends State<TextTwist> {
   @override
   void dispose() {
     timerKey.currentState?.dispose();
+    isGiveUp2 = false;
+
     super.dispose();
   }
 
@@ -68,19 +72,57 @@ class _TextTwistState extends State<TextTwist> {
     });
   }
 
+  giveup() async {
+    setState(() {
+      isGiveUp1 = true;
+    });
+  }
+
+  void setGiveUpFalse() {
+    setState(() {
+      isGiveUp1 = false;
+    });
+  }
+
+  void setGiveUpTrue() {
+    setState(() {
+      isGiveUp1 = false;
+      isGiveUp2 = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "TextTwist",
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: "KristenITC",
-            fontSize: 30,
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            const Text(
+              "TextTwist",
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: "KristenITC",
+                fontSize: 30,
+              ),
+            ),
+            Visibility(
+              visible: !isGiveUp2,
+              child: TextButton(
+                onPressed: () {
+                  giveup();
+                },
+                child: const Text("""Give\n  up""",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: "KristenITC",
+                      fontSize: 15,
+                    )),
+              ),
+            ),
+          ],
         ),
         elevation: 0,
         centerTitle: true,
@@ -89,7 +131,7 @@ class _TextTwistState extends State<TextTwist> {
       body: Stack(
         children: [
           AbsorbPointer(
-            absorbing: !hintPressed,
+            absorbing: !isGiveUp1,
             child: Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
@@ -118,11 +160,11 @@ class _TextTwistState extends State<TextTwist> {
                       IconButton(
                         onPressed: () async {
                           setState(() {
-                            hintPressed = false;
-                            isFetching = true;
-                            showHint = true;
+                            // hintPressed = false;
+                            // isFetching = true;
+                            // showHint = true;
                           });
-                          await getHint();
+                          // await getHint();
                         },
                         icon: Icon(
                           Icons.lightbulb,
@@ -147,7 +189,6 @@ class _TextTwistState extends State<TextTwist> {
                       ),
                     ],
                   ),
-                  // Timer widget, think about stopping it when the word is guessed
                   Stack(
                     children: [
                       Container(
@@ -180,8 +221,6 @@ class _TextTwistState extends State<TextTwist> {
                     }).toList(),
                   ),
                   Wrap(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    // mainAxisSize: MainAxisSize.min,
                     children: WordsInfo.letters.map((e) {
                       return RawMaterialButton(
                           onPressed: () {
@@ -286,12 +325,15 @@ class _TextTwistState extends State<TextTwist> {
                       ),
                     ],
                   ),
-                  showHintWidget(isFetching, showHint, Game.hint, setHintFalse),
                 ],
               ),
             ),
           ),
-          showHintWidget(isFetching, showHint, Game.hint, setHintFalse),
+          showGiveUpWidget(
+            isGiveUp1,
+            setGiveUpFalse,
+            setGiveUpTrue,
+          ),
         ],
       ),
     );

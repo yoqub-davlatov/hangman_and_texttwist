@@ -58,6 +58,9 @@ class _HangmanPageState extends State<HangmanPage> {
       isFetching = false;
       timerKey.currentState?.restartTimer();
       Game.word = contentResponse['word'].toString().toUpperCase();
+      Game.been.add(Game.word);
+      print(Game.word);
+      print(Game.been);
       Game.hint = contentResponse['hint'];
     });
   }

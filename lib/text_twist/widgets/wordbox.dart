@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+bool isGiveUp2 = false;
+
 class WordBox extends StatefulWidget {
   String inputWord = "";
   List words = [];
@@ -71,7 +74,7 @@ class _WordBoxState extends State<WordBox> {
   }
 
   bool isGuessed(String inputWord, String currentWord) {
-    if (guessed.contains(currentWord) || inputWord == currentWord) {
+    if (guessed.contains(currentWord) || inputWord == currentWord || isGiveUp2) {
       if (inputWord == currentWord) {
         guessed.add(inputWord);
       }

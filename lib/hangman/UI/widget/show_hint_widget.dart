@@ -7,9 +7,7 @@ Widget showHintWidget(
     bool isFetching, bool showHint, final String hint, final callBack) {
   return Visibility(
     visible: showHint,
-    child: Positioned(
-      top: 150,
-      left: 40,
+    child: Center(
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

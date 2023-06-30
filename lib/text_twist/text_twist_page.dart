@@ -131,7 +131,7 @@ class _TextTwistState extends State<TextTwist> {
       body: Stack(
         children: [
           AbsorbPointer(
-            absorbing: !isGiveUp1,
+            absorbing: isGiveUp2,
             child: Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(

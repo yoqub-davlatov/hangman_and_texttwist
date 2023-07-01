@@ -22,6 +22,7 @@ class _HangmanPageState extends State<HangmanPage> {
   bool hintPressed = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
   int currHints = 0;
+
   Player player = Player();
 
   @override

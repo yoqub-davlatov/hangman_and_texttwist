@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+bool isGiveUp2 = false;
+
 class WordBox extends StatefulWidget {
   String inputWord = "";
   List words = [];
@@ -19,7 +22,7 @@ class _WordBoxState extends State<WordBox> {
     List<String> words = widget.words.map((e) => e.toString()).toList();
     return Column(
       children: [
-        Container(
+        SizedBox(
           height: MediaQuery.of(context).size.height * 0.40,
           width: MediaQuery.of(context).size.width * 0.8,
           child: Wrap(
@@ -70,9 +73,12 @@ class _WordBoxState extends State<WordBox> {
   }
 
   bool isGuessed(String inputWord, String currentWord) {
-    if (guessed.contains(currentWord) || inputWord == currentWord) {
-      guessed.add(inputWord);
+    if (guessed.contains(currentWord) || inputWord == currentWord || isGiveUp2) {
+      if (inputWord == currentWord) {
+        guessed.add(inputWord);
+      }
       return true;
+
     }
     return false;
   }

@@ -19,7 +19,6 @@ class Game {
                 Now the categories are ${categories}and cnt is $cnt.
           """;
   }
-
   static int guessed = 0;
   static int gameTries = 0;
   static List<String> selectedChar = [];

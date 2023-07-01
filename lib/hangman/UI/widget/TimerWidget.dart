@@ -17,6 +17,7 @@ class TimerWidgetState extends State<TimerWidget> {
   @override
   void initState() {
     super.initState();
+    startTimer();
   }
 
   @override
@@ -40,11 +41,12 @@ class TimerWidgetState extends State<TimerWidget> {
   }
 
   void startTimer() {
+    print(timer.toString());
     if (timer != null && timer!.isActive) {
       return;
     }
     void addSecond() {
-      if(mounted) {
+      if (mounted) {
         setState(() {
           final seconds = duration.inSeconds + 1;
           duration = Duration(seconds: seconds);

@@ -3,7 +3,6 @@ import '../constants/constants.dart';
 import '../text_twist/text_twist_page.dart';
 import '../category_page/category_button.dart';
 import '../constants/games.dart';
-import '../hangman/hangman_page.dart';
 import '../services/api_test.dart';
 import '../text_twist/assets.dart';
 import 'category_settings.dart';
@@ -200,11 +199,7 @@ class _CategoryPageState extends State<CategoryPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => widget.game == Games.hangman
-                                ? HangmanPage(
-                                    category: Settings.selected,
-                                  )
-                                : const TextTwist()),
+                            builder: (context) => const TextTwist()),
                       );
                     },
                     style: OutlinedButton.styleFrom(

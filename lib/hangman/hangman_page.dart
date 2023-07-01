@@ -5,7 +5,6 @@ import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/hint_widget.dart';
 import '../hangman/UI/widget/level_widget.dart';
 import '../hangman/UI/widget/show_hint_widget.dart';
-import '../services/api_service.dart';
 import '../constants/constants.dart';
 import 'UI/widget/figure_image.dart';
 import 'UI/widget/letter.dart';
@@ -13,26 +12,17 @@ import 'utils/Game.dart';
 import 'UI/widget/points_widget.dart';
 
 class HangmanPage extends StatefulWidget {
-  final String category;
-  const HangmanPage({super.key, required this.category});
+  const HangmanPage({super.key});
 
   @override
   State<HangmanPage> createState() => _HangmanPageState();
 }
 
 class _HangmanPageState extends State<HangmanPage> {
-  bool isFetching = true;
   bool hintPressed = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
-  late String prompt = Game.getPrompt(widget.category);
-
+  int currHints = 0;
   Player player = Player();
-
-  @override
-  void initState() {
-    super.initState();
-    getMessage();
-  }
 
   @override
   void dispose() {
@@ -48,16 +38,11 @@ class _HangmanPageState extends State<HangmanPage> {
     });
   }
 
-  void getMessage() async {
-    isFetching = true;
-    showDescription = true;
-    // final contentResponse = await APIService.getMessage(Game.message);
-    final contentResponse = await hangmanApiCall(prompt);
+  bool showHint = false;
+  void setShowHintFalse() {
     setState(() {
-      isFetching = false;
-      timerKey.currentState?.restartTimer();
-      Game.word = contentResponse['word'].toString().toUpperCase();
-      Game.description = contentResponse['hint'];
+      showHint = false;
+      currHints++;
     });
   }
 
@@ -67,23 +52,27 @@ class _HangmanPageState extends State<HangmanPage> {
 
   void resetGame() {
     if (isWordGuessed()) {
-      player.level++;
       player.points += (6 - Game.gameTries) * 100;
       player.coins++;
+      if (Game.guessed + 1 < Game.words.length) {
+        player.level++;
+        Game.guessed++;
+      }
     } else {
       player.level = 1;
     }
     setState(() {
-      getMessage();
+      currHints = 0;
       hintPressed = false;
       Game.selectedChar = [];
       Game.gameTries = 0;
-      // timerKey.currentState?.restartTimer();
+      showDescription = true;
+      timerKey.currentState?.restartTimer();
     });
   }
 
   bool isWordGuessed() {
-    for (var letter in Game.word.split('')) {
+    for (var letter in Game.words[Game.guessed].toUpperCase().split('')) {
       if (!Game.selectedChar.contains(letter)) {
         return false;
       }
@@ -141,7 +130,13 @@ class _HangmanPageState extends State<HangmanPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (currHints < 3) {
+                            setState(() {
+                              showHint = true;
+                            });
+                          }
+                        },
                         icon: Icon(
                           Icons.lightbulb,
                           color: Colors.yellow[600],
@@ -198,10 +193,10 @@ class _HangmanPageState extends State<HangmanPage> {
                       alignment: WrapAlignment.center,
                       spacing: 3.0,
                       runSpacing: 3.0,
-                      children: Game.word
+                      children: Game.words[Game.guessed]
+                          .toUpperCase()
                           .split('')
-                          .map((e) => letter(e.toUpperCase(),
-                              !Game.selectedChar.contains(e.toUpperCase())))
+                          .map((e) => letter(e, !Game.selectedChar.contains(e)))
                           .toList(),
                     ),
                   ),
@@ -221,9 +216,10 @@ class _HangmanPageState extends State<HangmanPage> {
                                     : () {
                                         setState(() {
                                           Game.selectedChar.add(e);
-                                          if (!Game.word
+                                          if (!Game.words[Game.guessed]
+                                              .toUpperCase()
                                               .split('')
-                                              .contains(e.toUpperCase())) {
+                                              .contains(e)) {
                                             Game.gameTries++;
                                           }
                                         });
@@ -232,7 +228,10 @@ class _HangmanPageState extends State<HangmanPage> {
                               borderRadius: BorderRadius.circular(4.0),
                             ),
                             fillColor: Game.selectedChar.contains(e)
-                                ? Game.word.split('').contains(e.toUpperCase())
+                                ? Game.words[Game.guessed]
+                                        .toUpperCase()
+                                        .split('')
+                                        .contains(e)
                                     ? Colors.green
                                     : Colors.black
                                 : Colors.blue,
@@ -253,8 +252,13 @@ class _HangmanPageState extends State<HangmanPage> {
             ),
           ),
           if (isGameOver()) levelEnds(),
+          showHintWidget(showDescription, Game.descriptions[Game.guessed],
+              setDescriptionFalse),
           showHintWidget(
-              showDescription, Game.description, setDescriptionFalse),
+            showHint,
+            Game.hints[Game.guessed][currHints % 3],
+            setShowHintFalse,
+          ),
         ],
       ),
     );

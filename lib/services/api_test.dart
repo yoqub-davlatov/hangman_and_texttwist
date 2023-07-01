@@ -3,7 +3,7 @@ import 'package:dart_openai/dart_openai.dart';
 Future<List> apiCategoryCall(category) async {
   // Set the OpenAI API key from the .env file.
 
-  OpenAI.apiKey = "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";
+  OpenAI.apiKey = "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";
 
   OpenAIChatCompletionModel completion = await OpenAI.instance.chat.create(
     model: "gpt-3.5-turbo",

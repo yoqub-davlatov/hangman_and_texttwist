@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hangman_and_texttwist/category_page/category_hangman.dart';
 import '../constants/constants.dart';
 import '../category_page/category.dart';
 import '../constants/games.dart';
@@ -39,8 +40,8 @@ class MyHomePage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.blue,
-                  textStyle:
-                      const TextStyle(fontSize: 30, fontFamily: Constants.fontFamily),
+                  textStyle: const TextStyle(
+                      fontSize: 30, fontFamily: Constants.fontFamily),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 110, vertical: 20),
                 ),
@@ -49,8 +50,8 @@ class MyHomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            const CategoryPage(game: Games.hangman)),
+                      builder: (context) => const HangManCategoryPage(),
+                    ),
                   );
                 },
               ),
@@ -59,8 +60,8 @@ class MyHomePage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.blue,
                   backgroundColor: Colors.white,
-                  textStyle:
-                      const TextStyle(fontSize: 30, fontFamily: Constants.fontFamily),
+                  textStyle: const TextStyle(
+                      fontSize: 30, fontFamily: Constants.fontFamily),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 110, vertical: 20),
                 ),
@@ -71,7 +72,6 @@ class MyHomePage extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) =>
                             const CategoryPage(game: Games.wordtwist)),
-
                   );
                 },
               ),

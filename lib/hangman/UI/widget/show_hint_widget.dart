@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import '../../../constants/constants.dart';
 
-Widget showHintWidget(
-    bool isFetching, bool showHint, final String hint, final callBack) {
+Widget showHintWidget(bool showDescription, final String hint, final callBack) {
   return Visibility(
-    visible: showHint,
-    child: Center(
+    visible: showDescription,
+    child: Positioned(
+      top: 150,
+      left: 40,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -24,16 +23,14 @@ Widget showHintWidget(
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: isFetching
-                  ? const SpinKitFadingCube(color: Colors.black)
-                  : Text(
-                      hint,
-                      style: const TextStyle(
-                        fontFamily: Constants.fontFamily,
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+              child: Text(
+                hint,
+                style: const TextStyle(
+                  fontFamily: Constants.fontFamily,
+                  fontSize: 20,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
             ElevatedButton(
               onPressed: callBack,

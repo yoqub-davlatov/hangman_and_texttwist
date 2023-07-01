@@ -34,7 +34,7 @@ Widget failPassWidget(BuildContext context, bool pass, final resetGame) {
                     Text(
                       pass
                           ? 'The man lives to see another day!\nyay :)'
-                          : 'Word: ${Game.word}\nThe man dies\n:(',
+                          : 'Word: ${Game.words[Game.guessed]}\nThe man dies\n:(',
                       style: const TextStyle(
                         fontSize: 22,
                         color: Colors.blue,

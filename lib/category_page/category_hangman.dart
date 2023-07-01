@@ -62,55 +62,57 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                       ),
                       height: screenHeight * 0.8,
                       width: screenWidth * 0.9,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Column(
-                            children: List<Widget>.from(
-                              categoryList.map(
-                                (name) => categoryButton(
-                                  name,
-                                  categories.contains(name),
-                                  screenHeight,
-                                  screenWidth,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              children: List<Widget>.from(
+                                categoryList.map(
+                                  (name) => categoryButton(
+                                    name,
+                                    categories.contains(name),
+                                    screenHeight,
+                                    screenWidth,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Text(
-                            "Wanna use your own category?\nNo problem",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: Constants.fontFamily,
+                            const SizedBox(
+                              height: 20,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              textFieldWidget(screenHeight, screenWidth),
-                              IconButton(
-                                onPressed: () {
-                                  categories
-                                      .add(inputController.text.toUpperCase());
-                                  inputController.clear();
-                                  print(categories);
-                                },
-                                icon: const Icon(
-                                  Icons.add_circle_sharp,
-                                  color: Colors.blue,
-                                  size: 40,
-                                ),
+                            const Text(
+                              "Wanna use your own category?\nNo problem",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: Constants.fontFamily,
                               ),
-                            ],
-                          )
-                        ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                textFieldWidget(screenHeight, screenWidth),
+                                IconButton(
+                                  onPressed: () {
+                                    categories.add(
+                                        inputController.text.toUpperCase());
+                                    inputController.clear();
+                                    print(categories);
+                                  },
+                                  icon: const Icon(
+                                    Icons.add_circle_sharp,
+                                    color: Colors.blue,
+                                    size: 40,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     // const SizedBox(

@@ -105,9 +105,11 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                                 textFieldWidget(screenHeight, screenWidth),
                                 IconButton(
                                   onPressed: () {
-                                    categories.add(
-                                        inputController.text.toUpperCase());
-                                    inputController.clear();
+                                    setState(() {
+                                      categories.add(
+                                          inputController.text.toUpperCase());
+                                      inputController.clear();
+                                    });
                                   },
                                   icon: const Icon(
                                     Icons.add_circle_sharp,

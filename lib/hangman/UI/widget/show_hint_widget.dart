@@ -12,7 +12,7 @@ Widget showHintWidget(bool showDescription, final String hint, final callBack) {
           color: Colors.white,
           border: Border.all(
             color: Colors.blue,
-            width: 3,
+            width: 5,
           ),
           borderRadius: BorderRadius.circular(50),
         ),
@@ -34,11 +34,22 @@ Widget showHintWidget(bool showDescription, final String hint, final callBack) {
             ),
             ElevatedButton(
               onPressed: callBack,
+              style: ElevatedButton.styleFrom(
+                fixedSize: const Size(251, 44),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                side: const BorderSide(
+                  color: Color(0xff3E87FF),
+                  width: 3,
+                ),
+              ),
               child: const Text(
-                "Ok",
+                "Got it!",
                 style: TextStyle(
                   fontSize: 20,
                   fontFamily: Constants.fontFamily,
+                  color: Colors.green,
                 ),
               ),
             ),

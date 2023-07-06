@@ -22,6 +22,7 @@ class _HangmanPageState extends State<HangmanPage> {
   bool hintPressed = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
   int currHints = 0;
+  int currLevel = 0;
 
   Player player = Player();
 
@@ -59,8 +60,6 @@ class _HangmanPageState extends State<HangmanPage> {
         player.level++;
         Game.guessed++;
       }
-    } else {
-      player.level = 1;
     }
     setState(() {
       currHints = 0;
@@ -82,8 +81,10 @@ class _HangmanPageState extends State<HangmanPage> {
   }
 
   Widget levelEnds() {
+    currLevel++;
     timerKey.currentState?.stopTimer();
-    return failPassWidget(context, isWordGuessed(), resetGame);
+    return failPassWidget(
+        context, isWordGuessed(), resetGame, currLevel == Game.words.length);
   }
 
   @override
@@ -95,7 +96,6 @@ class _HangmanPageState extends State<HangmanPage> {
           style: const TextStyle(
             color: Colors.white,
             fontFamily: Constants.fontFamily,
-            fontSize: 30,
           ),
         ),
         backgroundColor: Colors.blue,

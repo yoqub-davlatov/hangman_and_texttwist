@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../category_page/category_hangman.dart';
 import '../../../constants/constants.dart';
 
 import '../../utils/Game.dart';
 
-Widget failPassWidget(BuildContext context, bool pass, final resetGame) {
+Widget failPassWidget(
+    BuildContext context, bool pass, final resetGame, bool finish) {
   const double verticalRatio = 322.0 / 823.0;
   const double horizontalRatio = 335.0 / 421.0;
   double screenHeight = MediaQuery.of(context).size.height * verticalRatio;
@@ -33,7 +35,9 @@ Widget failPassWidget(BuildContext context, bool pass, final resetGame) {
                   children: [
                     Text(
                       pass
-                          ? 'The man lives to see another day!\nyay :)'
+                          ? finish
+                              ? 'That was awesome!\nYou won the game!'
+                              : 'The man lives to see another day!\nyay :)'
                           : 'Word: ${Game.words[Game.guessed]}\nThe man dies\n:(',
                       style: const TextStyle(
                         fontSize: 22,
@@ -44,7 +48,17 @@ Widget failPassWidget(BuildContext context, bool pass, final resetGame) {
                     ),
                     const SizedBox(height: 30),
                     OutlinedButton(
-                      onPressed: resetGame,
+                      onPressed: finish || !pass
+                          ? () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const HangManCategoryPage(),
+                                ),
+                              );
+                            }
+                          : resetGame,
                       style: OutlinedButton.styleFrom(
                         fixedSize: const Size(251, 44),
                         shape: RoundedRectangleBorder(
@@ -56,7 +70,11 @@ Widget failPassWidget(BuildContext context, bool pass, final resetGame) {
                         ),
                       ),
                       child: Text(
-                        pass ? 'Next Level' : 'Play Again',
+                        pass
+                            ? finish
+                                ? 'Return'
+                                : 'Next Level'
+                            : 'Return',
                         style: const TextStyle(
                           fontSize: 22,
                           fontFamily: Constants.fontFamily,
@@ -84,7 +102,11 @@ Widget failPassWidget(BuildContext context, bool pass, final resetGame) {
             width: 200,
             height: 40,
             child: Text(
-              pass ? "Level Passed" : "Level Failed",
+              pass
+                  ? finish
+                      ? "Congratulations!"
+                      : "Level Passed"
+                  : "Level Failed",
               style: const TextStyle(
                 fontFamily: Constants.fontFamily,
                 color: Colors.white,

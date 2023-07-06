@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dart_openai/dart_openai.dart';
+import '../api_key.dart';
 import 'package:http/http.dart' as http;
 
 Future<Map> hangmanApiCall(final String prompt) async {
-  OpenAI.apiKey = "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";
+  OpenAI.apiKey = apikey;
 
   // Start using!
   OpenAIChatCompletionModel completion = await OpenAI.instance.chat.create(

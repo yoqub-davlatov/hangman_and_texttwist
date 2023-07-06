@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hangman_and_texttwist/hangman/hangman_page.dart';
+import '../hangman/hangman_page.dart';
 import '../constants/constants.dart';
 import '../hangman/utils/Game.dart';
 import '../services/api_service.dart';
@@ -204,7 +204,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         isLoading
-                            ? "Please wait\n The game is loading"
+                            ? "Please wait\nThe game is loading"
                             : "Are you ready to play?",
                         style: const TextStyle(
                           fontFamily: Constants.fontFamily,
@@ -217,7 +217,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                         ? const SpinKitSpinningLines(color: Colors.black)
                         : ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const HangmanPage(),
@@ -375,7 +375,6 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
       child: OutlinedButton(
         onPressed: () {
           !selected ? categories.add(name) : categories.remove(name);
-          print(categories);
           setState(() {});
         },
         style: OutlinedButton.styleFrom(

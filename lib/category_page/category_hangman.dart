@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../hangman/hangman_page.dart';
@@ -18,6 +20,8 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
     super.initState();
     setState(() {});
   }
+
+  bool error = false;
 
   int cnt = 1;
   TextEditingController inputController = TextEditingController();
@@ -205,7 +209,9 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                       child: Text(
                         isLoading
                             ? "Please wait\nThe game is loading"
-                            : "Are you ready to play?",
+                            : error
+                                ? "Something went wrong\nTry again"
+                                : "Are you ready to play?",
                         style: const TextStyle(
                           fontFamily: Constants.fontFamily,
                           fontSize: 20,
@@ -220,7 +226,11 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const HangmanPage(),
+                                  builder: (context) {
+                                    return error
+                                        ? const HangManCategoryPage()
+                                        : const HangmanPage();
+                                  },
                                 ),
                               );
                             },
@@ -234,9 +244,9 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                                 width: 3,
                               ),
                             ),
-                            child: const Text(
-                              "Let's go!",
-                              style: TextStyle(
+                            child: Text(
+                              error ? "Return" : "Let's go!",
+                              style: const TextStyle(
                                 fontSize: 20,
                                 fontFamily: Constants.fontFamily,
                                 color: Colors.green,
@@ -406,23 +416,29 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
       _categories += '$category, ';
     }
     // final contentResponse = await APIService.getMessage(Game.message);
-    final contentResponse =
-        await hangmanApiCall(Game.getPrompt(_categories, cnt));
-    // print(contentResponse);
+    try {
+      final contentResponse =
+          await hangmanApiCall(Game.getPrompt(_categories, cnt));
+      // print(contentResponse);
 
-    Game.words.clear();
-    Game.descriptions.clear();
-    Game.hints.clear();
-    Game.categories.clear();
+      Game.words.clear();
+      Game.descriptions.clear();
+      Game.hints.clear();
+      Game.categories.clear();
 
-    for (String category in categories) {
-      for (int i = 0; i < cnt; i++) {
-        Game.words.add(contentResponse[category]?[i]['word']);
-        Game.categories.add(category);
-        Game.descriptions.add(contentResponse[category]?[i]['description']);
-        Game.hints.add(
-            List<String>.from(contentResponse[category]?[i]['hints'] as List));
+      for (String category in categories) {
+        for (int i = 0; i < cnt; i++) {
+          Game.words.add(contentResponse[category]?[i]['word']);
+          Game.categories.add(category);
+          Game.descriptions.add(contentResponse[category]?[i]['description']);
+          Game.hints.add(List<String>.from(
+              contentResponse[category]?[i]['hints'] as List));
+        }
       }
+    } catch (e) {
+      error = true;
+      log("Something went wrong");
+      log(e.toString());
     }
   }
 }

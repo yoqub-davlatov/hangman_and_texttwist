@@ -99,7 +99,7 @@ Widget failPassWidget(
               ),
             ),
             alignment: Alignment.center,
-            width: 200,
+            width: 220,
             height: 40,
             child: Text(
               pass

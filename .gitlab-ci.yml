@@ -6,8 +6,8 @@ lint:
   stage: lint
   image: dart:latest
   script:
-    - dart pub get
-    - dart analyze --fatal-warnings
+    - flutter pub get
+    - flutter analyze --fatal-warnings
 
 test:
   stage: test

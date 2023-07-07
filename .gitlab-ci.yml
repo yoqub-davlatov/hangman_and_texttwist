@@ -1,7 +1,12 @@
 image: cirrusci/flutter:stable
 
 stages:
+  - lint
   - test
+  - coverage
+
+variables:
+  FLUTTER_TEST_OUTPUTS_DIR: "test_outputs"
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -12,7 +17,32 @@ cache:
 before_script:
   - flutter pub get
 
-flutter_test:
+lint:
+  stage: lint
+  script:
+    - dartanalyzer lib test || echo "Linting issues found."
+  artifacts:
+    when: always
+    paths:
+      - $FLUTTER_TEST_OUTPUTS_DIR/lint.txt
+    reports:
+      dotenv: $FLUTTER_TEST_OUTPUTS_DIR/lint.txt
+
+test:
   stage: test
   script:
-    - flutter test
+    - flutter test --machine > $FLUTTER_TEST_OUTPUTS_DIR/test_results.json
+  artifacts:
+    paths:
+      - $FLUTTER_TEST_OUTPUTS_DIR/test_results.json
+    reports:
+      junit: $FLUTTER_TEST_OUTPUTS_DIR/test_results.json
+
+coverage:
+  stage: coverage
+  script:
+    - flutter test --coverage
+    - lcov --summary coverage/lcov.info
+  artifacts:
+    paths:
+      - coverage/

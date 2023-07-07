@@ -4,14 +4,14 @@ stages:
 
 lint:
   stage: lint
-  image: dart:latest
+  image: cirrusci/flutter:latest
   script:
     - flutter pub get
     - flutter analyze --fatal-warnings
 
 test:
   stage: test
-  image: flutter:latest
+  image: cirrusci/flutter:latest
   before_script:
     - flutter config --no-analytics
     - flutter doctor

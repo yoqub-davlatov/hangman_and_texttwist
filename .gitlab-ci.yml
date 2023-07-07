@@ -1,0 +1,25 @@
+stages:
+  - lint
+  - test
+
+lint:
+  stage: lint
+  image: dart:latest
+  script:
+    - dart pub get
+    - dart analyze --fatal-warnings
+
+test:
+  stage: test
+  image: flutter:latest
+  before_script:
+    - flutter config --no-analytics
+    - flutter doctor
+    - flutter pub get
+  script:
+    - flutter test --coverage
+  artifacts:
+    paths:
+      - coverage/
+  only:
+    - main

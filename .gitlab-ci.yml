@@ -1,4 +1,4 @@
-image: google/flutter:latest
+image: cirrusci/flutter:latest
 
 stages:
   - lint

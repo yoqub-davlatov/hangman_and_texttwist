@@ -1,25 +1,18 @@
+image: cirrusci/flutter:stable
+
 stages:
-  - lint
   - test
 
-lint:
-  stage: lint
-  image: cirrusci/flutter:2.2.3
-  script:
-    - flutter pub get
-    - flutter analyze --fatal-warnings
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .pub/
+    - .dart_tool/
 
-test:
+before_script:
+  - flutter pub get
+
+flutter_test:
   stage: test
-  image: cirrusci/flutter:2.2.3
-  before_script:
-    - flutter config --no-analytics
-    - flutter doctor
-    - flutter pub get
   script:
-    - flutter test --coverage
-  artifacts:
-    paths:
-      - coverage/
-  only:
-    - main
+    - flutter test

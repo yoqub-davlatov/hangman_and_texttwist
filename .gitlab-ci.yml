@@ -1,3 +1,6 @@
+variables:
+  FLUTTER_TEST_OUTPUTS_DIR: "test_outputs"
+
 image: cirrusci/flutter:stable
 
 stages:
@@ -5,8 +8,7 @@ stages:
   - test
   - coverage
 
-variables:
-  FLUTTER_TEST_OUTPUTS_DIR: "test_outputs"
+
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -21,7 +23,8 @@ lint:
   stage: lint
   script:
     - mkdir -p $FLUTTER_TEST_OUTPUTS_DIR
-    - dartanalyzer lib test 2> $FLUTTER_TEST_OUTPUTS_DIR/lint.txt || echo "Linting issues found."
+    - dartanalyzer lib test 2> $FLUTTER_TEST_OUTPUTS_DIR/lint.txt || true
+    - cat $FLUTTER_TEST_OUTPUTS_DIR/lint.txt
   artifacts:
     when: always
     paths:

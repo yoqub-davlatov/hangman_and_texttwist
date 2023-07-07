@@ -1,4 +1,4 @@
-image: cirrusci/flutter:latest
+image: mobiledevops/flutter-sdk-image:latest
 
 stages:
   - lint

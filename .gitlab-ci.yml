@@ -20,7 +20,8 @@ before_script:
 lint:
   stage: lint
   script:
-    - dartanalyzer lib test || echo "Linting issues found."
+    - mkdir -p $FLUTTER_TEST_OUTPUTS_DIR
+    - dartanalyzer lib test | tee $FLUTTER_TEST_OUTPUTS_DIR/lint.txt || echo "Linting issues found."
   artifacts:
     when: always
     paths:

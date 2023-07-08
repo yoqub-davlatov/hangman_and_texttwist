@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/hangman/hangman_page.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../hangman/hangman_page.dart';
 import '../constants/constants.dart';
 import '../hangman/utils/Game.dart';
 import '../services/api_service.dart';
@@ -12,6 +15,14 @@ class HangManCategoryPage extends StatefulWidget {
 }
 
 class _HangManCategoryPageState extends State<HangManCategoryPage> {
+  @override
+  void initState() {
+    super.initState();
+    setState(() {});
+  }
+
+  bool error = false;
+
   int cnt = 1;
   TextEditingController inputController = TextEditingController();
   final List<String> categoryList = [
@@ -98,10 +109,11 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                                 textFieldWidget(screenHeight, screenWidth),
                                 IconButton(
                                   onPressed: () {
-                                    categories.add(
-                                        inputController.text.toUpperCase());
-                                    inputController.clear();
-                                    print(categories);
+                                    setState(() {
+                                      categories.add(
+                                          inputController.text.toUpperCase());
+                                      inputController.clear();
+                                    });
                                   },
                                   icon: const Icon(
                                     Icons.add_circle_sharp,
@@ -110,7 +122,14 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                                   ),
                                 ),
                               ],
-                            )
+                            ),
+                            Wrap(
+                              children: List<Widget>.from(
+                                categories.map(
+                                  (e) => showChosenCategories(e),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -118,6 +137,17 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                     // const SizedBox(
                     //   height: 20,
                     // ),
+                    const Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: Text(
+                        "Select number of\nwords per category",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: Constants.fontFamily,
+                        ),
+                      ),
+                    ),
                     incrementButton(),
                     OutlinedButton(
                       onPressed: () async {
@@ -178,8 +208,10 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         isLoading
-                            ? "Please wait\n The game is loading"
-                            : "Are you ready to play?",
+                            ? "Please wait\nThe game is loading"
+                            : error
+                                ? "Something went wrong\nTry again"
+                                : "Are you ready to play?",
                         style: const TextStyle(
                           fontFamily: Constants.fontFamily,
                           fontSize: 20,
@@ -187,26 +219,40 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    Visibility(
-                      visible: !isLoading,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HangmanPage(),
+                    isLoading
+                        ? const SpinKitSpinningLines(color: Colors.black)
+                        : ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return error
+                                        ? const HangManCategoryPage()
+                                        : const HangmanPage();
+                                  },
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: const Size(251, 44),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              side: const BorderSide(
+                                color: Color(0xff3E87FF),
+                                width: 3,
+                              ),
                             ),
-                          );
-                        },
-                        child: const Text(
-                          "Let's go!",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: Constants.fontFamily,
+                            child: Text(
+                              error ? "Return" : "Let's go!",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: Constants.fontFamily,
+                                color: Colors.green,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -263,6 +309,23 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
     );
   }
 
+  Widget showChosenCategories(String s) {
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            categories.remove(s);
+          });
+        },
+        child: Text(
+          s,
+          style: const TextStyle(color: Colors.blue, fontSize: 10),
+        ),
+      ),
+    );
+  }
+
   Widget incrementButton() {
     return SizedBox(
       width: 150,
@@ -280,7 +343,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
             icon: Visibility(
               visible: cnt > 1,
               child: const Icon(
-                Icons.arrow_back,
+                Icons.remove,
                 size: 40,
                 color: Colors.blue,
               ),
@@ -304,7 +367,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
             icon: Visibility(
               visible: cnt < 9,
               child: const Icon(
-                Icons.arrow_forward,
+                Icons.add,
                 size: 40,
                 color: Colors.blue,
               ),
@@ -322,7 +385,6 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
       child: OutlinedButton(
         onPressed: () {
           !selected ? categories.add(name) : categories.remove(name);
-          print(categories);
           setState(() {});
         },
         style: OutlinedButton.styleFrom(
@@ -354,17 +416,29 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
       _categories += '$category, ';
     }
     // final contentResponse = await APIService.getMessage(Game.message);
-    final contentResponse =
-        await hangmanApiCall(Game.getPrompt(_categories, cnt));
-    // print(contentResponse);
+    try {
+      final contentResponse =
+          await hangmanApiCall(Game.getPrompt(_categories, cnt));
+      // print(contentResponse);
 
-    for (String category in categories) {
-      for (int i = 0; i < cnt; i++) {
-        Game.words.add(contentResponse[category]?[i]['word']);
-        Game.descriptions.add(contentResponse[category]?[i]['description']);
-        Game.hints.add(
-            List<String>.from(contentResponse[category]?[i]['hints'] as List));
+      Game.words.clear();
+      Game.descriptions.clear();
+      Game.hints.clear();
+      Game.categories.clear();
+
+      for (String category in categories) {
+        for (int i = 0; i < cnt; i++) {
+          Game.words.add(contentResponse[category]?[i]['word']);
+          Game.categories.add(category);
+          Game.descriptions.add(contentResponse[category]?[i]['description']);
+          Game.hints.add(List<String>.from(
+              contentResponse[category]?[i]['hints'] as List));
+        }
       }
+    } catch (e) {
+      error = true;
+      log("Something went wrong");
+      log(e.toString());
     }
   }
 }

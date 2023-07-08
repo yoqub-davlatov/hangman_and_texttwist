@@ -1,5 +1,6 @@
 class Game {
   static List<String> words = [];
+  static List<String> categories = [];
   static List<String> descriptions = [];
   static List<List<String>> hints = [];
   static String getPrompt(final String categories, final int cnt) {
@@ -19,6 +20,7 @@ class Game {
                 Now the categories are ${categories}and cnt is $cnt.
           """;
   }
+
   static int guessed = 0;
   static int gameTries = 0;
   static List<String> selectedChar = [];

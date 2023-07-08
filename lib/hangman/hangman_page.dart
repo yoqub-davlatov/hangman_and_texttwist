@@ -22,6 +22,7 @@ class _HangmanPageState extends State<HangmanPage> {
   bool hintPressed = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
   int currHints = 0;
+  int currLevel = 0;
 
   Player player = Player();
 
@@ -59,8 +60,6 @@ class _HangmanPageState extends State<HangmanPage> {
         player.level++;
         Game.guessed++;
       }
-    } else {
-      player.level = 1;
     }
     setState(() {
       currHints = 0;
@@ -74,7 +73,7 @@ class _HangmanPageState extends State<HangmanPage> {
 
   bool isWordGuessed() {
     for (var letter in Game.words[Game.guessed].toUpperCase().split('')) {
-      if (!Game.selectedChar.contains(letter)) {
+      if (letter != ' ' && !Game.selectedChar.contains(letter)) {
         return false;
       }
     }
@@ -82,20 +81,21 @@ class _HangmanPageState extends State<HangmanPage> {
   }
 
   Widget levelEnds() {
+    currLevel++;
     timerKey.currentState?.stopTimer();
-    return failPassWidget(context, isWordGuessed(), resetGame);
+    return failPassWidget(
+        context, isWordGuessed(), resetGame, currLevel == Game.words.length);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Hangman",
-          style: TextStyle(
+        title: Text(
+          Game.categories[Game.guessed],
+          style: const TextStyle(
             color: Colors.white,
             fontFamily: Constants.fontFamily,
-            fontSize: 30,
           ),
         ),
         backgroundColor: Colors.blue,
@@ -197,7 +197,12 @@ class _HangmanPageState extends State<HangmanPage> {
                       children: Game.words[Game.guessed]
                           .toUpperCase()
                           .split('')
-                          .map((e) => letter(e, !Game.selectedChar.contains(e)))
+                          .map(
+                            (e) => letter(
+                              e,
+                              !Game.selectedChar.contains(e),
+                            ),
+                          )
                           .toList(),
                     ),
                   ),

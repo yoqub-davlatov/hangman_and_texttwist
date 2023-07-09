@@ -57,27 +57,6 @@ class _TextTwistState extends State<TextTwist> {
     });
   }
 
-  void getMessage() async {
-    isFetching = true;
-    showHint = true;
-    // final contentResponse = await APIService.getMessage(Game.message);
-    final contentResponse = await hangmanApiCall(prompt);
-    setState(() {
-      isFetching = false;
-      timerKey.currentState?.restartTimer();
-      Game.word = contentResponse['word'].toString().toUpperCase();
-      Game.hint = contentResponse['hint'];
-    });
-  }
-
-  getHint() async {
-    final contentResponse = await hangmanApiCall(Game.getHintPrompt());
-    setState(() {
-      isFetching = false;
-      Game.hint = contentResponse['hint'];
-    });
-  }
-
   giveup() async {
     setState(() {
       isGiveUp1 = true;

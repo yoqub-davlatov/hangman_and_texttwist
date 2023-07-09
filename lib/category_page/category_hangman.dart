@@ -257,7 +257,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -411,29 +411,29 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
   }
 
   Future<void> getMessage() async {
-    String _categories = '';
-    for (String category in categories) {
-      _categories += '$category, ';
-    }
     // final contentResponse = await APIService.getMessage(Game.message);
     try {
-      final contentResponse =
-          await hangmanApiCall(Game.getPrompt(_categories, cnt));
-      // print(contentResponse);
+      Game.cnt = cnt;
+      Game.categories = categories;
+      final String category = categories[0];
+      // print(category);
+      print(cnt);
+      final contentResponse = await hangmanApiCall(Game.getPrompt(category));
+      print(contentResponse);
 
+      Game.guessed = 0;
       Game.words.clear();
       Game.descriptions.clear();
       Game.hints.clear();
-      Game.categories.clear();
 
-      for (String category in categories) {
-        for (int i = 0; i < cnt; i++) {
-          Game.words.add(contentResponse[category]?[i]['word']);
-          Game.categories.add(category);
-          Game.descriptions.add(contentResponse[category]?[i]['description']);
-          Game.hints.add(List<String>.from(
-              contentResponse[category]?[i]['hints'] as List));
-        }
+      for (int i = 0; i < cnt; i++) {
+        // print(contentResponse[category][i]['word']);
+        Game.words.add(contentResponse[i]['word']);
+        // print(contentResponse[category][i]['description']);
+        Game.descriptions.add(contentResponse[i]['description']);
+        // print(contentResponse[category][i]['hints'] as List);
+        Game.hints.add(
+            List<String>.from(contentResponse[i]['hints'] as List));
       }
     } catch (e) {
       error = true;

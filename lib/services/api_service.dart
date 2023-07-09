@@ -4,7 +4,7 @@ import 'package:dart_openai/dart_openai.dart';
 import '../api_key.dart';
 import 'package:http/http.dart' as http;
 
-Future<Map> hangmanApiCall(final String prompt) async {
+Future<List> hangmanApiCall(final String prompt) async {
   OpenAI.apiKey = apikey;
   try {
     OpenAIChatCompletionModel completion = await OpenAI.instance.chat.create(
@@ -18,6 +18,7 @@ Future<Map> hangmanApiCall(final String prompt) async {
       ],
     );
     log(completion.choices.first.message.content);
+    // await Future.delayed(Duration(seconds: 10));
     return jsonDecode(completion.choices.first.message.content);
   } on RequestFailedException catch (e) {
     log(e.message);

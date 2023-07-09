@@ -3,21 +3,19 @@ class Game {
   static List<String> categories = [];
   static List<String> descriptions = [];
   static List<List<String>> hints = [];
-  static String getPrompt(final String categories, final int cnt) {
-    return """ I will give you a list of categories and one number cnt. 
-                For each category, generate cnt very closely related words, and a very short description for each word. 
-                Additionally, provide me three different hints for each word, so that they could help me to guess the word. 
-                Provide your generated text in the following json format (please put all quotation marks):
+  static int cnt = 0;
+  static String getPrompt(final String category) {
+    return """For a category of $category, generate $cnt very closely related word(s), and a very short description for each word.
+              Put them in the json list, therefore the length of the list becomes $cnt.
+              Additionally, provide me three different hints for each word, so that they could help me to guess the word. 
+              Provide your generated text as the list that contains of the json objects in the following format (please put all quotation marks):
+              [
                 {
-                  "category_i" : [
-                      {
-                        "word" : "word_for_category_i",
-                        "description" : "description_of_word",
-                        "hints" : ["hint_1", "hint_2", "hint_3"]
-                      },
-                  ]
+                  "word" : "word_1",
+                  "description" : "description_of_word_1",
+                  "hints" : ["hint_1", "hint_2", "hint_3"]
                 }
-                Now the categories are ${categories}and cnt is $cnt.
+              ],
           """;
   }
 

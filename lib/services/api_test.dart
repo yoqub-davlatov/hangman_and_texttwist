@@ -9,9 +9,9 @@ Future<List> apiCategoryCall(category) async {
     model: "gpt-3.5-turbo",
     messages: [
       OpenAIChatCompletionChoiceMessageModel(
-        content: "Give me 4-5 words in category: $category. "
+        content: "Give me 4-5 words (Each word should not be longer than 6 letters) in category: $category. "
             "Compose words with maximum common letters. "
-            "Each word should be 6 letters maximum. Separate words with"
+            "Separate words with"
             " commas with spaces. Do not provide the category, just the items.",
         role: OpenAIChatMessageRole.user,
       ),

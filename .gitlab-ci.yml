@@ -1,0 +1,43 @@
+image: mobiledevops/flutter-sdk-image:latest
+
+stages:
+  - lint
+  - build
+  - test
+
+cache:
+  key: "$CI_JOB_NAME"
+  paths:
+    - .dart_tool/
+    - .pub/
+    - build/
+
+before_script:
+  - flutter pub get
+
+lint:
+  stage: lint
+  script:
+    - flutter analyze --no-fatal-infos --no-fatal-warnings > lint_results.txt
+  artifacts:
+    paths:
+      - lint_results.txt
+
+build:
+  stage: build
+  script:
+    - flutter build apk
+
+test:
+  stage: test
+  script:
+    - flutter test --coverage
+  artifacts:
+    paths:
+      - coverage/
+    reports:
+      junit: test-results.xml
+
+after_script:
+  - genhtml coverage/lcov.info --output=coverage
+  - lcov --list coverage/lcov.info

@@ -27,7 +27,7 @@ class _WordBoxState extends State<WordBox> {
           width: MediaQuery.of(context).size.width * 0.8,
           child: Wrap(
             direction: Axis.vertical,
-            spacing: 20,
+            spacing: 15,
             runSpacing: 15,
             children: words
                 .map(

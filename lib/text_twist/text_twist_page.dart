@@ -30,12 +30,9 @@ class _TextTwistState extends State<TextTwist> {
 
     });
   }
-  bool isFetching = true;
-  bool hintPressed = false;
+
   bool isGiveUp1 = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
-  late String prompt = Game.getPrompt(widget.category);
-  late String hintPrompt = Game.getHintPrompt();
 
   Player player = Player();
   String input = "";
@@ -48,35 +45,7 @@ class _TextTwistState extends State<TextTwist> {
     super.dispose();
   }
 
-  bool showHint = true;
 
-  void setHintFalse() {
-    setState(() {
-      showHint = false;
-      hintPressed = true;
-    });
-  }
-
-  void getMessage() async {
-    isFetching = true;
-    showHint = true;
-    // final contentResponse = await APIService.getMessage(Game.message);
-    final contentResponse = await hangmanApiCall(prompt);
-    setState(() {
-      isFetching = false;
-      timerKey.currentState?.restartTimer();
-      Game.word = contentResponse['word'].toString().toUpperCase();
-      Game.hint = contentResponse['hint'];
-    });
-  }
-
-  getHint() async {
-    final contentResponse = await hangmanApiCall(Game.getHintPrompt());
-    setState(() {
-      isFetching = false;
-      Game.hint = contentResponse['hint'];
-    });
-  }
 
   giveup() async {
     setState(() {

@@ -1,16 +1,34 @@
-# hangman_and_texttwist
+# Hangman & TextTwist mobile game application
+---
+Two-in-one game application that combines classic games Hangman and TextTwist. The application is powered by the OpenAI API, which allows for dynamic and limitless word options. Therefore, the game never runs out of new challenges to test your vocabulary and word-guessing skills.
+___
 
-The ultimate word game duo available as a Flutter app on your Android device
+## Features
+---
+Screenshots of the game...
 
-## Getting Started
+## Getting started
+---
+Installation guide:
+How to play:
 
-This project is a starting point for a Flutter application.
+## Contributing
+---
+Contributions to the game application are welcome! If you find an issue, have an idea for an improvement, or want to contribute new features, please follow these steps:
+1. Fork the repository.
+    
+2. Create a new branch for your contribution:
+    
+    ```bash
+git checkout -b feature/your-feature-name
+```
+    
+3. Make your changes and commit them with descriptive commit messages.
+    
+4. Push your changes to your forked repository.
+    
+5. Submit a pull request to the main repository explaining your changes.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## License
+---
+The game application is open-source and released under the [MIT License](https://chat.openai.com/LICENSE). 

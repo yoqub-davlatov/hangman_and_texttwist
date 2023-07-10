@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hangman_and_texttwist/text_twist/text_twist_page.dart';
 
 bool isGiveUp2 = false;
+bool isWon = false;
 
 class WordBox extends StatefulWidget {
   String inputWord = "";
   List words = [];
+  Function setWin;
 
-  WordBox({super.key, required this.inputWord, required this.words});
+  WordBox(
+      {super.key,
+      required this.inputWord,
+      required this.words,
+      required this.setWin});
 
   @override
   State<WordBox> createState() => _WordBoxState();
@@ -15,6 +22,12 @@ class WordBox extends StatefulWidget {
 class _WordBoxState extends State<WordBox> {
   // List<String> words = ["cat", "pen", "ate", "dog", "bat", "rat", "pan", "penca"];
   Set<String> guessed = {};
+
+  void _setWin() {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      widget.setWin();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +40,7 @@ class _WordBoxState extends State<WordBox> {
           width: MediaQuery.of(context).size.width * 0.8,
           child: Wrap(
             direction: Axis.vertical,
-            spacing: 20,
+            spacing: 15,
             runSpacing: 15,
             children: words
                 .map(
@@ -72,13 +85,21 @@ class _WordBoxState extends State<WordBox> {
     );
   }
 
+  void guessedAll() {
+    if (guessed.length == widget.words.length) {
+      _setWin();
+    }
+  }
+
   bool isGuessed(String inputWord, String currentWord) {
-    if (guessed.contains(currentWord) || inputWord == currentWord || isGiveUp2) {
+    if (guessed.contains(currentWord) ||
+        inputWord == currentWord ||
+        isGiveUp2) {
       if (inputWord == currentWord) {
         guessed.add(inputWord);
+        guessedAll();
       }
       return true;
-
     }
     return false;
   }

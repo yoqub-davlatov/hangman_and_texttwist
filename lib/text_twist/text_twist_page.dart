@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hangman_and_texttwist/text_twist/widgets/restart_widget.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/hint_widget.dart';
@@ -17,6 +18,8 @@ import 'widgets/showGiveUpWidget.dart';
 
 class TextTwist extends StatefulWidget {
   final String category;
+  static final GlobalKey<_TextTwistState> textTwistKey =
+      GlobalKey<_TextTwistState>();
 
   const TextTwist({super.key, required this.category});
 
@@ -26,16 +29,12 @@ class TextTwist extends StatefulWidget {
 
 class _TextTwistState extends State<TextTwist> {
   callbackDeleteLetter() {
-    setState(() {
-
-    });
+    setState(() {});
   }
-  bool isFetching = true;
-  bool hintPressed = false;
+
   bool isGiveUp1 = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
-  late String prompt = Game.getPrompt(widget.category);
-  late String hintPrompt = Game.getHintPrompt();
+  bool showRestart = false;
 
   Player player = Player();
   String input = "";
@@ -44,17 +43,8 @@ class _TextTwistState extends State<TextTwist> {
   void dispose() {
     timerKey.currentState?.dispose();
     isGiveUp2 = false;
-
+    isWon = false;
     super.dispose();
-  }
-
-  bool showHint = true;
-
-  void setHintFalse() {
-    setState(() {
-      showHint = false;
-      hintPressed = true;
-    });
   }
 
   giveup() async {
@@ -76,6 +66,41 @@ class _TextTwistState extends State<TextTwist> {
     });
   }
 
+  void stopTime() {
+    if (isGiveUp2 || isWon) {
+      timerKey.currentState?.stopTimer();
+    }
+  }
+
+  bool gameEnded() {
+    return isGiveUp2 || showRestart;
+  }
+
+  void setWon() {
+    setState(() {
+      isWon = true;
+      showRestart = true;
+    });
+  }
+
+  bool wonOrLost() {
+    return !isGiveUp2;
+  }
+
+  Widget showRestartWidget() {
+    stopTime();
+    setState(() {});
+    return Align(
+      alignment: Alignment.bottomCenter,
+      heightFactor: 4.3,
+      child: RestartWidget(
+        context,
+        wonOrLost(),
+        gameEnded(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -83,29 +108,29 @@ class _TextTwistState extends State<TextTwist> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              "TextTwist",
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: "KristenITC",
-                fontSize: 30,
+            Expanded(
+              child: const Text(
+                "TextTwist",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "KristenITC",
+                  fontSize: 30,
+                ),
               ),
             ),
-            Visibility(
-              visible: !isGiveUp2,
-              child: TextButton(
-                onPressed: () {
-                  giveup();
-                },
-                child: const Text("""Give\n  up""",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "KristenITC",
-                      fontSize: 15,
-                    )),
-              ),
+            TextButton(
+              onPressed: () {
+                giveup();
+              },
+              child: Text("""Give\n  up""",
+                  style: TextStyle(
+                    color: isGiveUp2 ? Colors.blue : Colors.white,
+                    fontFamily: "KristenITC",
+                    fontSize: 15,
+                  )),
             ),
           ],
         ),
@@ -160,7 +185,7 @@ class _TextTwistState extends State<TextTwist> {
                           fixedSize: const Size(45, 45),
                         ),
                       ),
-                      const StopWatch(),
+                      TimerWidget(key: timerKey),
                       IconButton(
                         onPressed: () {},
                         icon: Icon(
@@ -190,6 +215,7 @@ class _TextTwistState extends State<TextTwist> {
                         top: 30,
                         left: 20,
                         child: WordBox(
+                          setWin: setWon,
                           inputWord: input,
                           words: WordsInfo.words,
                         ),
@@ -202,7 +228,8 @@ class _TextTwistState extends State<TextTwist> {
                     children: WordsInfo.typedLetters.map((e) {
                       return Container(
                           padding: const EdgeInsets.all(2.0),
-                          child: letter(e, e.letter != '', callbackDeleteLetter));
+                          child:
+                              letter(e, e.letter != '', callbackDeleteLetter));
                     }).toList(),
                   ),
                   Wrap(
@@ -212,7 +239,8 @@ class _TextTwistState extends State<TextTwist> {
                       return RawMaterialButton(
                           onPressed: () {
                             setState(() {
-                              if (WordsInfo.index != WordsInfo.typedLetters.length) {
+                              if (WordsInfo.index !=
+                                  WordsInfo.typedLetters.length) {
                                 if (!WordsInfo.typedLetters.contains(e)) {
                                   WordsInfo.typedLetters[WordsInfo.index] = e;
                                   WordsInfo.updateIndex();
@@ -318,6 +346,7 @@ class _TextTwistState extends State<TextTwist> {
               ),
             ),
           ),
+          showRestartWidget(),
           showGiveUpWidget(
             isGiveUp1,
             setGiveUpFalse,

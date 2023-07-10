@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dart_openai/dart_openai.dart';
-import '../api_key.dart';
+import 'package:hangman_and_texttwist/api_key.dart';
 import 'package:http/http.dart' as http;
 
 Future<List> hangmanApiCall(final String prompt) async {
@@ -31,7 +31,7 @@ class APIService {
   static Future<Map> getMessage(final String prompt) async {
     try {
       String url = "https://api.openai.com/v1/chat/completions";
-      String openAIkey = "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";
+      String openAIkey = "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";
       var response = await http.post(
         Uri.parse(url),
         headers: {

@@ -45,4 +45,3 @@ app.*.map.json
 /keys.env
 /lib/env/env.dart
 /lib/env/env.g.dart
-/lib/api_key.dart

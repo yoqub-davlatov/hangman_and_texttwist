@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dart_openai/dart_openai.dart';
-
+import 'package:hangman_and_texttwist/api_key.dart';
 import 'package:http/http.dart' as http;
 
-Future<Map> hangmanApiCall(final String prompt) async {
-  OpenAI.apiKey = "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";
+Future<List> hangmanApiCall(final String prompt) async {
+  OpenAI.apiKey = apikey;
   try {
     OpenAIChatCompletionModel completion = await OpenAI.instance.chat.create(
       model: "gpt-3.5-turbo",
@@ -18,6 +18,7 @@ Future<Map> hangmanApiCall(final String prompt) async {
       ],
     );
     log(completion.choices.first.message.content);
+    // await Future.delayed(Duration(seconds: 10));
     return jsonDecode(completion.choices.first.message.content);
   } on RequestFailedException catch (e) {
     log(e.message);

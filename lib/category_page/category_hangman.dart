@@ -103,33 +103,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                             const SizedBox(
                               height: 20,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                textFieldWidget(screenHeight, screenWidth),
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      categories.add(
-                                          inputController.text.toUpperCase());
-                                      inputController.clear();
-                                    });
-                                  },
-                                  icon: const Icon(
-                                    Icons.add_circle_sharp,
-                                    color: Colors.blue,
-                                    size: 40,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Wrap(
-                              children: List<Widget>.from(
-                                categories.map(
-                                  (e) => showChosenCategories(e),
-                                ),
-                              ),
-                            ),
+                            textFieldWidget(screenHeight, screenWidth),
                           ],
                         ),
                       ),
@@ -137,6 +111,42 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                     // const SizedBox(
                     //   height: 20,
                     // ),
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        children: categories
+                            .map(
+                              (e) => Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      categories.remove(e);
+                                    });
+                                  },
+                                  child: Chip(
+                                    backgroundColor: Colors.blue,
+                                    shape: const StadiumBorder(
+                                      side: BorderSide(
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                    label: Text(
+                                      e,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.white,
+                                        fontFamily: Constants.fontFamily,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
                     const Padding(
                       padding: EdgeInsets.all(4.0),
                       child: Text(
@@ -180,6 +190,9 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                         ),
                       ),
                     ),
+                    const SizedBox(
+                      height: 30,
+                    )
                   ],
                 ),
               ),
@@ -257,7 +270,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -265,8 +278,8 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
 
   Widget textFieldWidget(double screenHeight, double screenWidth) {
     return SizedBox(
-      width: screenWidth * 0.7,
-      height: screenHeight * 0.06,
+      width: screenWidth * 0.85,
+      height: screenHeight * 0.2,
       child: TextFormField(
         controller: inputController,
         textAlign: TextAlign.center,
@@ -296,6 +309,16 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
             borderSide: const BorderSide(
               color: Color(0xff3E87FF),
               width: 3.0,
+            ),
+          ),
+          suffix: IconButton(
+            onPressed: () {
+              categories.add(inputController.text.toUpperCase());
+              inputController.clear();
+            },
+            icon: const Icon(
+              Icons.send,
+              color: Colors.blue,
             ),
           ),
           hintText: "Enter your category",
@@ -411,29 +434,28 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
   }
 
   Future<void> getMessage() async {
-    String _categories = '';
-    for (String category in categories) {
-      _categories += '$category, ';
-    }
     // final contentResponse = await APIService.getMessage(Game.message);
     try {
-      final contentResponse =
-          await hangmanApiCall(Game.getPrompt(_categories, cnt));
-      // print(contentResponse);
+      Game.cnt = cnt;
+      Game.categories = categories;
+      final String category = categories[0];
+      // print(category);
+      print(cnt);
+      final contentResponse = await hangmanApiCall(Game.getPrompt(category));
+      print(contentResponse);
 
+      Game.guessed = 0;
       Game.words.clear();
       Game.descriptions.clear();
       Game.hints.clear();
-      Game.categories.clear();
 
-      for (String category in categories) {
-        for (int i = 0; i < cnt; i++) {
-          Game.words.add(contentResponse[category]?[i]['word']);
-          Game.categories.add(category);
-          Game.descriptions.add(contentResponse[category]?[i]['description']);
-          Game.hints.add(List<String>.from(
-              contentResponse[category]?[i]['hints'] as List));
-        }
+      for (int i = 0; i < cnt; i++) {
+        // print(contentResponse[category][i]['word']);
+        Game.words.add(contentResponse[i]['word']);
+        // print(contentResponse[category][i]['description']);
+        Game.descriptions.add(contentResponse[i]['description']);
+        // print(contentResponse[category][i]['hints'] as List);
+        Game.hints.add(List<String>.from(contentResponse[i]['hints'] as List));
       }
     } catch (e) {
       error = true;

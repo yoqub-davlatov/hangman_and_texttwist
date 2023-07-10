@@ -8,12 +8,13 @@ Screenshots of the game...
 
 ## Getting started
 Installation guide:
+
 How to play:
 
 ## Contributing
 Contributions to the game application are welcome! If you find an issue, have an idea for an improvement, or want to contribute new features, please follow these steps:
 1. Fork the repository.
-2. Create a new branch for your contribution:
+1. Create a new branch for your contribution:
 ```bash
 git checkout -b feature/your-feature-name
 ```
@@ -23,4 +24,4 @@ git checkout -b feature/your-feature-name
 
 ## License
 ---
-The game application is open-source and released under the [MIT License](https://chat.openai.com/LICENSE). 
+The game application is open-source and released under the [MIT License](https://opensource.org/license/mit/).

@@ -13,16 +13,12 @@ How to play:
 ## Contributing
 Contributions to the game application are welcome! If you find an issue, have an idea for an improvement, or want to contribute new features, please follow these steps:
 1. Fork the repository.
-    
 2. Create a new branch for your contribution:
-   ```bash
-   git checkout -b feature/your-feature-name
+```bash
+git checkout -b feature/your-feature-name
 ```
-
 3. Make your changes and commit them with descriptive commit messages.
-    
 4. Push your changes to your forked repository.
-    
 5. Submit a pull request to the main repository explaining your changes.
 
 ## License

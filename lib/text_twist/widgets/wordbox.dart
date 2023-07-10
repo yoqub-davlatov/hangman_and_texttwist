@@ -33,6 +33,7 @@ class _WordBoxState extends State<WordBox> {
   Widget build(BuildContext context) {
     String inputWord = widget.inputWord;
     List<String> words = widget.words.map((e) => e.toString()).toList();
+    words = ["pear", "apple", "lemon", "melon","banana", "pepper"];
     return Column(
       children: [
         SizedBox(

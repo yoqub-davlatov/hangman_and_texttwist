@@ -38,6 +38,7 @@ class _CategoryPageState extends State<CategoryPage> {
         WordsInfo.words.map((string) => string.replaceAll('.', '')).toList();
     Map<String, int> letterCounts = {};
     List<String> dict = [];
+    WordsInfo.words =["pear", "apple", "lemon", "melon","banana", "pepper"];
     for (String word in WordsInfo.words) {
       Map<String, int> tempCounts = {};
       for (int i = 0; i < word.length; i++) {

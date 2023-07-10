@@ -15,11 +15,10 @@ Contributions to the game application are welcome! If you find an issue, have an
 1. Fork the repository.
     
 2. Create a new branch for your contribution:
-    
-    ```bash
-git checkout -b feature/your-feature-name
+   ```bash
+   git checkout -b feature/your-feature-name
 ```
-    
+
 3. Make your changes and commit them with descriptive commit messages.
     
 4. Push your changes to your forked repository.

@@ -203,7 +203,7 @@ class _TextTwistState extends State<TextTwist> {
                     children: [
                       Container(
                         alignment: Alignment.center,
-                        height: height * 0.45,
+                        height: height * 0.41,
                         width: MediaQuery.of(context).size.width * 0.9,
                         decoration: BoxDecoration(
                           color: Colors.transparent,
@@ -212,7 +212,7 @@ class _TextTwistState extends State<TextTwist> {
                         ),
                       ),
                       Positioned(
-                        top: 30,
+                        top: (height / 2000) * 30,
                         left: 20,
                         child: WordBox(
                           setWin: setWon,

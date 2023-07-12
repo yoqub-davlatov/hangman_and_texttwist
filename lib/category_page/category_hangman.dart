@@ -71,7 +71,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                           width: 8,
                         ),
                       ),
-                      height: screenHeight * 0.8,
+                      height: screenHeight * 0.75,
                       width: screenWidth * 0.9,
                       child: SingleChildScrollView(
                         child: Column(
@@ -101,7 +101,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                               ),
                             ),
                             const SizedBox(
-                              height: 20,
+                              height: 10,
                             ),
                             textFieldWidget(screenHeight, screenWidth),
                           ],
@@ -200,9 +200,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
           ),
           Visibility(
             visible: readyToStart,
-            child: Positioned(
-              top: 150,
-              left: 40,
+            child: Center(
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -277,9 +275,8 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
   }
 
   Widget textFieldWidget(double screenHeight, double screenWidth) {
-    return SizedBox(
-      width: screenWidth * 0.85,
-      height: screenHeight * 0.2,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: TextFormField(
         controller: inputController,
         textAlign: TextAlign.center,

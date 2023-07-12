@@ -4,9 +4,7 @@ import '../../../constants/constants.dart';
 Widget showHintWidget(bool showDescription, final String hint, final callBack) {
   return Visibility(
     visible: showDescription,
-    child: Positioned(
-      top: 150,
-      left: 40,
+    child: Center(
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

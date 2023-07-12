@@ -10,8 +10,7 @@ Widget failPassWidget(
   const double horizontalRatio = 335.0 / 421.0;
   double screenHeight = MediaQuery.of(context).size.height * verticalRatio;
   double screenWidth = MediaQuery.of(context).size.width * horizontalRatio;
-  return Padding(
-    padding: const EdgeInsets.fromLTRB(40, 150, 0, 0),
+  return Center(
     child: SizedBox(
       width: screenWidth,
       height: screenHeight,

@@ -90,4 +90,5 @@ git checkout -b feature/your-feature-name
 
 ## License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 The game application is open-source and released under the MIT License. Click on the badge to view the license details.

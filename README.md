@@ -89,6 +89,6 @@ git checkout -b feature/your-feature-name
 5. Submit a pull request to the main repository explaining your changes.
 
 ## License
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://gitlab.pg.innopolis.university/hangman-and-wordtwist-s23/hangmanandtexttwist/-/blob/main/LICENSE)
 
 The game application is open-source and released under the MIT License. Click on the badge to view the license details.

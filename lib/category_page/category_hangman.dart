@@ -46,7 +46,13 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Category list'),
+        title: const Text(
+          'STORY MODE',
+          style: TextStyle(
+            fontFamily: Constants.fontFamily,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Stack(
         children: [
@@ -61,56 +67,53 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
             child: Center(
               child: SingleChildScrollView(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(
                           color: const Color(0xff3E87FF),
-                          width: 8,
+                          width: 4,
                         ),
                       ),
                       height: screenHeight * 0.8,
                       width: screenWidth * 0.9,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Column(
-                              children: List<Widget>.from(
-                                categoryList.map(
-                                  (name) => categoryButton(
-                                    name,
-                                    categories.contains(name),
-                                    screenHeight,
-                                    screenWidth,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            children: List<Widget>.from(
+                                  categoryList.map(
+                                    (name) => categoryButton(
+                                      name,
+                                      categories.contains(name),
+                                      screenHeight,
+                                      screenWidth,
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const Text(
-                              "Wanna use your own category?\nNo problem",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: Constants.fontFamily,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            textFieldWidget(screenHeight, screenWidth),
-                          ],
-                        ),
+                                ) +
+                                [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text(
+                                    "Wanna use your own category?\nNo problem",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: Constants.fontFamily,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  textFieldWidget(screenWidth),
+                                ],
+                          ),
+                        ],
                       ),
                     ),
-                    // const SizedBox(
-                    //   height: 20,
-                    // ),
                     Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Wrap(
@@ -276,10 +279,9 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
     );
   }
 
-  Widget textFieldWidget(double screenHeight, double screenWidth) {
+  Widget textFieldWidget(double screenWidth) {
     return SizedBox(
       width: screenWidth * 0.85,
-      height: screenHeight * 0.2,
       child: TextFormField(
         controller: inputController,
         textAlign: TextAlign.center,

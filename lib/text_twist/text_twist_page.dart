@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hangman_and_texttwist/text_twist/widgets/category_widget.dart';
 import 'package:hangman_and_texttwist/text_twist/widgets/restart_widget.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
@@ -20,7 +21,6 @@ class TextTwist extends StatefulWidget {
   final String category;
   static final GlobalKey<_TextTwistState> textTwistKey =
       GlobalKey<_TextTwistState>();
-
   const TextTwist({super.key, required this.category});
 
   @override
@@ -31,7 +31,6 @@ class _TextTwistState extends State<TextTwist> {
   callbackDeleteLetter() {
     setState(() {});
   }
-
   bool isGiveUp1 = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
   bool showRestart = false;
@@ -160,7 +159,7 @@ class _TextTwistState extends State<TextTwist> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       pointsWidget(player.points),
-                      levelWidget(player.level),
+                      categoryWidget(widget.category),
                       diamondWidget(player.coins),
                     ],
                   ),

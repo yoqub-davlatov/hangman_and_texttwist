@@ -13,7 +13,7 @@ Widget letter(String character, bool hidden) {
           height: 50,
           width: 50,
           decoration: BoxDecoration(
-            color: hidden ? Colors.white : Colors.green,
+            color: hidden ? Colors.transparent : Colors.green,
             border: Border.all(
               color: Colors.blue,
               width: 2,

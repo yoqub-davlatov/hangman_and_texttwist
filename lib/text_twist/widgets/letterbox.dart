@@ -6,7 +6,8 @@ Widget letter(LetterElem character, bool selected, Function callback) {
       height: 35,
       width: 35,
       decoration: BoxDecoration(
-        color: selected ? Colors.blue : Colors.white,
+
+        color: selected ? Colors.blue : Colors.transparent,
         border: Border.all(color: Colors.blue),
         borderRadius: BorderRadius.circular(10.0),
       ),

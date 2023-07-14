@@ -313,8 +313,10 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
           ),
           suffix: IconButton(
             onPressed: () {
-              categories.add(inputController.text.toUpperCase());
-              inputController.clear();
+              setState(() {
+                categories.add(inputController.text.toUpperCase());
+                inputController.clear();
+              });
             },
             icon: const Icon(
               Icons.send,

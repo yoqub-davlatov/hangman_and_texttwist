@@ -203,9 +203,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
           ),
           Visibility(
             visible: readyToStart,
-            child: Positioned(
-              top: 150,
-              left: 40,
+            child: Center(
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,

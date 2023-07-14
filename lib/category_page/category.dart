@@ -31,7 +31,7 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   Future<void> setUpTextTwist() async {
-    await requestWords();
+    // await requestWords();
 
     WordsInfo.words = WordsInfo.words.map((e) => e.toLowerCase()).toList();
     WordsInfo.words =
@@ -116,7 +116,8 @@ class _CategoryPageState extends State<CategoryPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(
                         color: const Color(0xff3E87FF),

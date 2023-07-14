@@ -11,7 +11,8 @@ Widget failPassWidget(
   double screenHeight = MediaQuery.of(context).size.height * verticalRatio;
   double screenWidth = MediaQuery.of(context).size.width * horizontalRatio;
   return Center(
-    child: SizedBox(
+    child: Container(
+      margin: const EdgeInsets.only(bottom:80),
       width: screenWidth,
       height: screenHeight,
       child: Stack(
@@ -24,7 +25,7 @@ Widget failPassWidget(
                 color: Colors.white,
                 border: Border.all(
                   color: Colors.blue,
-                  width: 10,
+                  width: 5,
                 ),
                 borderRadius: BorderRadius.circular(50),
               ),
@@ -87,6 +88,7 @@ Widget failPassWidget(
             ),
           ),
           Container(
+
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(
                 Radius.circular(30),

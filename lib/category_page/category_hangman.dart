@@ -46,7 +46,17 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Category list'),
+        title: const Text('Category Page'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        // backgroundColor: const Color(0xffFFFB00),
+
+
       ),
       body: Stack(
         children: [
@@ -200,9 +210,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
           ),
           Visibility(
             visible: readyToStart,
-            child: Positioned(
-              top: 150,
-              left: 40,
+            child: Center(
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,

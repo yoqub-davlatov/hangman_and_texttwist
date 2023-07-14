@@ -3,6 +3,7 @@ import 'package:hangman_and_texttwist/category_page/category_hangman.dart';
 import '../constants/constants.dart';
 import '../category_page/category.dart';
 import '../constants/games.dart';
+import '../screen_size.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -11,6 +12,12 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double Screenwidth = MediaQuery.of(context).size.width;
+    double Screenheight = MediaQuery.of(context).size.height;
+    print(Screenwidth);
+    print(Screenheight);
+    print(logicalWidth);
+    print(logicalHeight);
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -23,9 +30,9 @@ class MyHomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(
-                width: 300,
-                child: Text(
+              SizedBox(
+                width:(logicalWidth / 400) * 300,
+                child: const Text(
                   "PICK YOUR GAME AND LET THE FUN BEGIN!",
                   style: TextStyle(
                     fontFamily: Constants.fontFamily,
@@ -35,15 +42,16 @@ class MyHomePage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 150), // Add this
+              SizedBox(height: (logicalHeight / 700) * 150), // Add this
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.blue,
                   textStyle: const TextStyle(
                       fontSize: 30, fontFamily: Constants.fontFamily),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 110, vertical: 20),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: (logicalWidth / 400) * 110,
+                      vertical: (logicalHeight / 700) * 20),
                 ),
                 child: const Text('Hangman'),
                 onPressed: () {
@@ -55,15 +63,16 @@ class MyHomePage extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 40), // Add this
+              SizedBox(height: (logicalHeight / 700) * 40), // Add this
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.blue,
                   backgroundColor: Colors.white,
                   textStyle: const TextStyle(
                       fontSize: 30, fontFamily: Constants.fontFamily),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 110, vertical: 20),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: (logicalWidth / 400) * 110,
+                      vertical: (logicalHeight / 700) * 20),
                 ),
                 child: const Text('TextTwist'),
                 onPressed: () {

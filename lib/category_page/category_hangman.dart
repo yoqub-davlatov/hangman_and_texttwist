@@ -108,7 +108,7 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  textFieldWidget(screenWidth),
+                                  textFieldWidget(),
                                 ],
                           ),
                         ],
@@ -277,9 +277,9 @@ class _HangManCategoryPageState extends State<HangManCategoryPage> {
     );
   }
 
-  Widget textFieldWidget(double screenWidth) {
-    return SizedBox(
-      width: screenWidth * 0.85,
+  Widget textFieldWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: TextFormField(
         controller: inputController,
         textAlign: TextAlign.center,

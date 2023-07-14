@@ -5,11 +5,7 @@ Two-in-one game application that combines classic games Hangman and TextTwist. T
 
 ## Demo
 
-<!-- blank line -->
-<figure class="video_container">
-  <iframe src="https://www.youtube.com/embed/enMumwvLAug" frameborder="0" allowfullscreen="true"> </iframe>
-</figure>
-<!-- blank line -->
+![Alt Text](https://media.giphy.com/media/Ju7l5y9osyymQ/giphy.gif?cid=ecf05e47f2mjwqppkuy17chdn4skivh3n7ec8qpahokfytak&ep=v1_gifs_search&rid=giphy.gif&ct=g)
 
 
 

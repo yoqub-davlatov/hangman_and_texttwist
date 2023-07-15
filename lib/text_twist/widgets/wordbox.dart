@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/text_twist/text_twist_page.dart';
+import 'package:hangman_and_texttwist/text_twist/assets.dart';
 
 bool isGiveUp2 = false;
 bool isWon = false;
@@ -21,10 +21,10 @@ class WordBox extends StatefulWidget {
 
 class _WordBoxState extends State<WordBox> {
   // List<String> words = ["cat", "pen", "ate", "dog", "bat", "rat", "pan", "penca"];
-  Set<String> guessed = {};
+  Set<String> guessed = WordsInfo.guessed;
 
   void _setWin() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.setWin();
     });
   }
@@ -33,7 +33,6 @@ class _WordBoxState extends State<WordBox> {
   Widget build(BuildContext context) {
     String inputWord = widget.inputWord;
     List<String> words = widget.words.map((e) => e.toString()).toList();
-    words = ["pear", "apple", "lemon", "melon","banana", "pepper"];
     return Column(
       children: [
         SizedBox(

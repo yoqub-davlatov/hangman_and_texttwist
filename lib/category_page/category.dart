@@ -3,8 +3,6 @@ import '../constants/constants.dart';
 import '../text_twist/text_twist_page.dart';
 import '../category_page/category_button.dart';
 import '../constants/games.dart';
-import '../services/api_test.dart';
-import '../text_twist/assets.dart';
 import 'category_settings.dart';
 
 class CategoryPage extends StatefulWidget {
@@ -19,51 +17,6 @@ class CategoryPage extends StatefulWidget {
 class _CategoryPageState extends State<CategoryPage> {
   callbackSetSelected() {
     setState(() {});
-  }
-
-  Future requestWords() async {
-    if (Settings.inputCategoryController.text.isNotEmpty) {
-      WordsInfo.words =
-          await apiCategoryCall(Settings.inputCategoryController.text.trim());
-    } else {
-      WordsInfo.words = await apiCategoryCall(Settings.selected);
-    }
-  }
-
-  Future<void> setUpTextTwist() async {
-    // await requestWords();
-
-    WordsInfo.words = WordsInfo.words.map((e) => e.toLowerCase()).toList();
-    WordsInfo.words =
-        WordsInfo.words.map((string) => string.replaceAll('.', '')).toList();
-    Map<String, int> letterCounts = {};
-    List<String> dict = [];
-    WordsInfo.words =["pear", "apple", "lemon", "melon","banana", "pepper"];
-    for (String word in WordsInfo.words) {
-      Map<String, int> tempCounts = {};
-      for (int i = 0; i < word.length; i++) {
-        String letter = word[i];
-        tempCounts[letter] =
-            tempCounts.containsKey(letter) ? tempCounts[letter]! + 1 : 1;
-      }
-      for (String key in tempCounts.keys) {
-        if (letterCounts.containsKey(key)) {
-          if (letterCounts[key]! < tempCounts[key]!) {
-            for (int i = 0; i < tempCounts[key]! - letterCounts[key]!; i++) {
-              dict.add(key);
-            }
-            letterCounts[key] = tempCounts[key]!;
-          }
-        } else {
-          for (int i = 0; i < tempCounts[key]!; i++) {
-            dict.add(key);
-          }
-          letterCounts[key] = tempCounts[key]!;
-        }
-      }
-    }
-    dict.shuffle();
-    WordsInfo.letters = dict.map((e) => LetterElem(e)).toList();
   }
 
   @override
@@ -116,7 +69,6 @@ class _CategoryPageState extends State<CategoryPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-
                       color: Colors.transparent,
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(
@@ -198,7 +150,6 @@ class _CategoryPageState extends State<CategoryPage> {
                   ),
                   OutlinedButton(
                     onPressed: () async {
-                      await setUpTextTwist();
                       Navigator.push(
                         context,
                         MaterialPageRoute(

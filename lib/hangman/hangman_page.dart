@@ -23,6 +23,88 @@ class HangmanPage extends StatefulWidget {
 }
 
 class _HangmanPageState extends State<HangmanPage> {
+
+  Widget keyboardWidget(String guessedWord, Function isGameOver,
+      Function setStateFunction) {
+    List<String> firstRow = Game.alphabet.sublist(0, 10);
+    List<String> secondRow = Game.alphabet.sublist(10, 19);
+    List<String> thirdRow = Game.alphabet.sublist(19, 26);
+    List<List<String>> allRows = [firstRow, secondRow, thirdRow];
+    List<EdgeInsets> paddingList = [
+      const EdgeInsets.symmetric(horizontal: 5.0),
+      // First row full width (0 padding)
+      const EdgeInsets.symmetric(horizontal: 37.0),
+      // Second row with padding
+      const EdgeInsets.symmetric(horizontal: 75.0),
+      // Third row with more padding
+    ];
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: allRows
+          .asMap()
+          .entries
+          .map((entry) {
+        List<String> row = entry.value;
+        EdgeInsets padding = paddingList[entry.key];
+        return SizedBox(
+          height: 40, // Adjust this value as needed
+          child: GridView.count(
+            crossAxisCount: row.length,
+            // number of items in a row
+            crossAxisSpacing: 5.0,
+            // horizontal spacing
+            mainAxisSpacing: 5.0,
+            // vertical spacing
+            padding: padding,
+            children: row.map((String letter) =>
+                letterButton(letter, guessedWord, isGameOver, setStateFunction)
+            ).toList(),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+
+
+  Widget letterButton(String letter, String guessedWord, Function isGameOver, Function setStateFunction) {
+    return Container(
+      height: 50.0, // you can adjust these values to your liking
+      width: 37.0,  // you can adjust these values to your liking
+      child: RawMaterialButton(
+        onPressed:
+        isGameOver() || Game.selectedChar.contains(letter)
+            ? null
+            : () {
+          setStateFunction(letter);
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4.0),
+        ),
+        fillColor: Game.selectedChar.contains(letter)
+            ? guessedWord
+            .toUpperCase()
+            .split('')
+            .contains(letter)
+            ? Colors.green
+            : Colors.black
+            : Colors.blue,
+        child: Text(
+          letter,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 22, // you may need to adjust this value as well
+            fontFamily: Constants.fontFamily,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
 
   bool hintPressed = false;
@@ -264,60 +346,22 @@ class _HangmanPageState extends State<HangmanPage> {
                           .split('')
                           .map(
                             (e) => letter(
-                              e,
-                              !Game.selectedChar.contains(e),
-                            ),
-                          )
+                          e,
+                          !Game.selectedChar.contains(e),
+                        ),
+                      )
                           .toList(),
                     ),
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 200,
-                    child: GridView.count(
-                      crossAxisCount: 8,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                      padding: const EdgeInsets.all(8.0),
-                      children: Game.alphabet.map((e) {
-                        return RawMaterialButton(
-                            onPressed:
-                                isGameOver() || Game.selectedChar.contains(e)
-                                    ? null
-                                    : () {
-                                        setState(() {
-                                          Game.selectedChar.add(e);
-                                          if (!Game.words[Game.guessed]
-                                              .toUpperCase()
-                                              .split('')
-                                              .contains(e)) {
-                                            Game.gameTries++;
-                                          }
-                                        });
-                                      },
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            fillColor: Game.selectedChar.contains(e)
-                                ? Game.words[Game.guessed]
-                                        .toUpperCase()
-                                        .split('')
-                                        .contains(e)
-                                    ? Colors.green
-                                    : Colors.black
-                                : Colors.blue,
-                            child: Text(
-                              e,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontFamily: Constants.fontFamily,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ));
-                      }).toList(),
-                    ),
-                  )
+                  keyboardWidget(Game.words[Game.guessed], isGameOver, (String selectedChar) {
+                    setState(() {
+                      Game.selectedChar.add(selectedChar);
+                      if (!Game.words[Game.guessed].toUpperCase().split('').contains(selectedChar)) {
+                        Game.gameTries++;
+                      }
+                    });
+                  }),
+
                 ],
               ),
             ),
@@ -353,8 +397,8 @@ class _HangmanPageState extends State<HangmanPage> {
                         isLoading
                             ? "Please wait\nFetching data for new category"
                             : error
-                                ? "Something went wrong\nTry again"
-                                : "Are you ready to play?",
+                            ? "Something went wrong\nTry again"
+                            : "Are you ready to play?",
                         style: const TextStyle(
                           fontFamily: Constants.fontFamily,
                           fontSize: 20,
@@ -365,39 +409,39 @@ class _HangmanPageState extends State<HangmanPage> {
                     isLoading
                         ? const SpinKitSpinningLines(color: Colors.black)
                         : ElevatedButton(
-                            onPressed: () {
-                              if (error) {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const HangManCategoryPage(),
-                                  ),
-                                );
-                              } else {
-                                setState(() {
-                                  readyToStart = false;
-                                });
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(251, 44),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              side: const BorderSide(
-                                color: Color(0xff3E87FF),
-                                width: 3,
-                              ),
+                      onPressed: () {
+                        if (error) {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                              const HangManCategoryPage(),
                             ),
-                            child: Text(
-                              error ? "Return" : "Let's go!",
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontFamily: Constants.fontFamily,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ),
+                          );
+                        } else {
+                          setState(() {
+                            readyToStart = false;
+                          });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(251, 44),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        side: const BorderSide(
+                          color: Color(0xff3E87FF),
+                          width: 3,
+                        ),
+                      ),
+                      child: Text(
+                        error ? "Return" : "Let's go!",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontFamily: Constants.fontFamily,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

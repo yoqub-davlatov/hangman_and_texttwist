@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:hangman_and_texttwist/text_twist/widgets/category_widget.dart';
 import 'package:hangman_and_texttwist/text_twist/widgets/restart_widget.dart';
-import '../hangman/UI/widget/TimerWidget.dart';
+import '../category_page/category_settings.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/hint_widget.dart';
-import '../hangman/UI/widget/level_widget.dart';
 import '../hangman/UI/widget/points_widget.dart';
-import '../hangman/UI/widget/show_hint_widget.dart';
-import '../services/api_service.dart';
-import 'widgets/Game.dart';
+import '../services/api_test.dart';
 import 'widgets/letterbox.dart';
 import 'assets.dart';
 import '../constants/constants.dart';
 import 'widgets/player.dart';
-import "widgets/stopwatch.dart";
 import 'widgets/wordbox.dart';
 import 'widgets/showGiveUpWidget.dart';
+import 'widgets/showLoadingWidget.dart';
 
 class TextTwist extends StatefulWidget {
   final String category;
   static final GlobalKey<_TextTwistState> textTwistKey =
       GlobalKey<_TextTwistState>();
+
   const TextTwist({super.key, required this.category});
 
   @override
@@ -31,9 +29,12 @@ class _TextTwistState extends State<TextTwist> {
   callbackDeleteLetter() {
     setState(() {});
   }
+
   bool isGiveUp1 = false;
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
   bool showRestart = false;
+  bool isLoading = true;
+  List unguessedWords = [];
 
   Player player = Player();
   String input = "";
@@ -43,7 +44,71 @@ class _TextTwistState extends State<TextTwist> {
     timerKey.currentState?.dispose();
     isGiveUp2 = false;
     isWon = false;
+    isLoading = true;
+    WordsInfo.guessed = {};
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setUpTextTwist();
+    setState(() {});
+  }
+
+  Future<void> requestWords() async {
+    if (Settings.inputCategoryController.text.isNotEmpty) {
+      WordsInfo.words =
+          await apiCategoryCall(Settings.inputCategoryController.text.trim());
+    } else {
+      WordsInfo.words = await apiCategoryCall(Settings.selected);
+    }
+    WordsInfo.words = WordsInfo.words.map((e) => e.toLowerCase()).toList();
+    WordsInfo.words =
+        WordsInfo.words.map((string) => string.replaceAll('.', '')).toList();
+    unguessedWords = [...WordsInfo.words];
+
+  }
+
+  Future<void> setUpTextTwist() async {
+    await requestWords();
+    await updateLetters();
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> updateLetters() async {
+    Map<String, int> letterCounts = {};
+    List<String> dict = [];
+    for (String word in unguessedWords) {
+      Map<String, int> tempCounts = {};
+      for (int i = 0; i < word.length; i++) {
+        String letter = word[i];
+        tempCounts[letter] =
+            tempCounts.containsKey(letter) ? tempCounts[letter]! + 1 : 1;
+      }
+      for (String key in tempCounts.keys) {
+        if (letterCounts.containsKey(key)) {
+          if (letterCounts[key]! < tempCounts[key]!) {
+            for (int i = 0; i < tempCounts[key]! - letterCounts[key]!; i++) {
+              dict.add(key);
+            }
+            letterCounts[key] = tempCounts[key]!;
+          }
+        } else {
+          for (int i = 0; i < tempCounts[key]!; i++) {
+            dict.add(key);
+          }
+          letterCounts[key] = tempCounts[key]!;
+        }
+      }
+    }
+    dict.shuffle();
+    WordsInfo.letters = dict.map((e) => LetterElem(e)).toList();
+    WordsInfo.typedLetters = List<LetterElem>.generate(
+        WordsInfo.getMaxLength(), (index) => LetterElem(""));
   }
 
   giveup() async {
@@ -103,14 +168,13 @@ class _TextTwistState extends State<TextTwist> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: const Text(
+            const Expanded(
+              child: Text(
                 "TextTwist",
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -169,6 +233,11 @@ class _TextTwistState extends State<TextTwist> {
                       IconButton(
                         onPressed: () async {
                           setState(() {
+                            print(WordsInfo.guessed);
+                            unguessedWords.removeWhere(
+                                (item) => WordsInfo.guessed.contains(item));
+                            updateLetters();
+
                             // hintPressed = false;
                             // isFetching = true;
                             // showHint = true;
@@ -351,6 +420,7 @@ class _TextTwistState extends State<TextTwist> {
             setGiveUpFalse,
             setGiveUpTrue,
           ),
+          showLoadingWidget(isLoading)
         ],
       ),
     );

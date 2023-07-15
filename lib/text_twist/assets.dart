@@ -1,6 +1,7 @@
 class WordsInfo {
   static List<LetterElem> letters = [];
 
+  static Set<String> guessed = {};
   static int index = 0;
   static List words = [];
   static List<LetterElem> typedLetters =

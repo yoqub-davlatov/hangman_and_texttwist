@@ -4,8 +4,9 @@
 Two-in-one game application that combines classic games Hangman and TextTwist. The application is powered by the OpenAI API, which allows for dynamic and limitless word options. Therefore, the game never runs out of new challenges to test your vocabulary and word-guessing skills.
 
 ## Demo
-**Hangman Gameplay:**
-<img src="lib/gifs/untitled.gif" width="108" height="222"/>
+**Hangman Gameplay:**                                        **TextTwist Gameplay**:
+
+<img src="lib/gifs/untitled.gif" width="108" height="222"/>                                                          <img src="lib/gifs/untitled.gif" width="108" height="222"/>
 
 ## How to use
 1. Launch the game application.

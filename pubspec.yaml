@@ -32,6 +32,7 @@ dependencies:
   getwidget: ^2.0.4
   dart_openai: ^3.0.0
   flutter_spinkit: ^5.2.0
+  google_mobile_ads: ^3.0.0
 
   flutter:
     sdk: flutter

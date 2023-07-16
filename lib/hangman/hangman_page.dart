@@ -13,6 +13,7 @@ import '../services/api_service.dart';
 import 'UI/widget/figure_image.dart';
 import 'UI/widget/letter.dart';
 import 'utils/Game.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'UI/widget/points_widget.dart';
 
 class HangmanPage extends StatefulWidget {
@@ -23,9 +24,50 @@ class HangmanPage extends StatefulWidget {
 }
 
 class _HangmanPageState extends State<HangmanPage> {
+  InterstitialAd? _interstitialAd;
+  bool _isInterstitialAdReady = false;
 
-  Widget keyboardWidget(String guessedWord, Function isGameOver,
-      Function setStateFunction) {
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: 'ca-app-pub-9502797972174557/3977457230',
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _isInterstitialAdReady = true;
+          print('${ad.runtimeType} loaded.');
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _interstitialAd = null;
+          _isInterstitialAdReady = false;
+          print('InterstitialAd failed to load: $error');
+        },
+      ),
+    );
+  }
+
+   void _showAd() {
+     if (_interstitialAd == null || !_isInterstitialAdReady) {
+       print('Warning: attempt to show ad before it was loaded.');
+       return;
+     }
+     _interstitialAd?.show();
+     _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
+       onAdDismissedFullScreenContent: (InterstitialAd ad) {
+         print('${ad.runtimeType} dismissed.');
+         ad.dispose();
+         _loadInterstitialAd();
+       },
+       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+         print('${ad.runtimeType} failed to show with error $error.');
+         ad.dispose();
+         _loadInterstitialAd();
+       },
+     );
+   }
+
+  Widget keyboardWidget(
+      String guessedWord, Function isGameOver, Function setStateFunction) {
     List<String> firstRow = Game.alphabet.sublist(0, 10);
     List<String> secondRow = Game.alphabet.sublist(10, 19);
     List<String> thirdRow = Game.alphabet.sublist(19, 26);
@@ -41,10 +83,7 @@ class _HangmanPageState extends State<HangmanPage> {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: allRows
-          .asMap()
-          .entries
-          .map((entry) {
+      children: allRows.asMap().entries.map((entry) {
         List<String> row = entry.value;
         EdgeInsets padding = paddingList[entry.key];
         return SizedBox(
@@ -57,38 +96,34 @@ class _HangmanPageState extends State<HangmanPage> {
             mainAxisSpacing: 5.0,
             // vertical spacing
             padding: padding,
-            children: row.map((String letter) =>
-                letterButton(letter, guessedWord, isGameOver, setStateFunction)
-            ).toList(),
+            children: row
+                .map((String letter) => letterButton(
+                    letter, guessedWord, isGameOver, setStateFunction))
+                .toList(),
           ),
         );
       }).toList(),
     );
   }
 
-
-
-  Widget letterButton(String letter, String guessedWord, Function isGameOver, Function setStateFunction) {
+  Widget letterButton(String letter, String guessedWord, Function isGameOver,
+      Function setStateFunction) {
     return Container(
       height: 50.0, // you can adjust these values to your liking
-      width: 37.0,  // you can adjust these values to your liking
+      width: 37.0, // you can adjust these values to your liking
       child: RawMaterialButton(
-        onPressed:
-        isGameOver() || Game.selectedChar.contains(letter)
+        onPressed: isGameOver() || Game.selectedChar.contains(letter)
             ? null
             : () {
-          setStateFunction(letter);
-        },
+                setStateFunction(letter);
+              },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4.0),
         ),
         fillColor: Game.selectedChar.contains(letter)
-            ? guessedWord
-            .toUpperCase()
-            .split('')
-            .contains(letter)
-            ? Colors.green
-            : Colors.black
+            ? guessedWord.toUpperCase().split('').contains(letter)
+                ? Colors.green
+                : Colors.black
             : Colors.blue,
         child: Text(
           letter,
@@ -102,8 +137,6 @@ class _HangmanPageState extends State<HangmanPage> {
       ),
     );
   }
-
-
 
   GlobalKey<TimerWidgetState> timerKey = GlobalKey();
 
@@ -122,6 +155,8 @@ class _HangmanPageState extends State<HangmanPage> {
   void initState() {
     super.initState();
     setState(() {});
+    _loadInterstitialAd();
+
   }
 
   @override
@@ -129,6 +164,8 @@ class _HangmanPageState extends State<HangmanPage> {
     timerKey.currentState?.dispose();
     Game.selectedChar.clear();
     Game.gameTries = 0;
+    super.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
@@ -224,8 +261,7 @@ class _HangmanPageState extends State<HangmanPage> {
         // print(contentResponse[category][i]['description']);
         Game.descriptions.add(contentResponse[i]['description']);
         // print(contentResponse[category][i]['hints'] as List);
-        Game.hints.add(
-            List<String>.from(contentResponse[i]['hints'] as List));
+        Game.hints.add(List<String>.from(contentResponse[i]['hints'] as List));
       }
     } catch (e) {
       error = true;
@@ -280,9 +316,22 @@ class _HangmanPageState extends State<HangmanPage> {
                       IconButton(
                         onPressed: () {
                           if (currHints < 3) {
-                            setState(() {
-                              showHint = true;
-                            });
+                            _showAd();
+                            if (_isInterstitialAdReady) {
+                              _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
+                                onAdDismissedFullScreenContent: (InterstitialAd ad) {
+                                  // Update the hint display only after the ad is dismissed.
+                                  setState(() {
+                                    showHint = true;
+                                  });
+                                  ad.dispose();
+                                  // Load a new ad for next time.
+                                  _loadInterstitialAd();
+                                },
+                              );
+                              _interstitialAd?.show();
+                              _isInterstitialAdReady = false;
+                            }
                           }
                         },
                         icon: Icon(
@@ -346,22 +395,25 @@ class _HangmanPageState extends State<HangmanPage> {
                           .split('')
                           .map(
                             (e) => letter(
-                          e,
-                          !Game.selectedChar.contains(e),
-                        ),
-                      )
+                              e,
+                              !Game.selectedChar.contains(e),
+                            ),
+                          )
                           .toList(),
                     ),
                   ),
-                  keyboardWidget(Game.words[Game.guessed], isGameOver, (String selectedChar) {
+                  keyboardWidget(Game.words[Game.guessed], isGameOver,
+                      (String selectedChar) {
                     setState(() {
                       Game.selectedChar.add(selectedChar);
-                      if (!Game.words[Game.guessed].toUpperCase().split('').contains(selectedChar)) {
+                      if (!Game.words[Game.guessed]
+                          .toUpperCase()
+                          .split('')
+                          .contains(selectedChar)) {
                         Game.gameTries++;
                       }
                     });
                   }),
-
                 ],
               ),
             ),
@@ -397,8 +449,8 @@ class _HangmanPageState extends State<HangmanPage> {
                         isLoading
                             ? "Please wait\nFetching data for new category"
                             : error
-                            ? "Something went wrong\nTry again"
-                            : "Are you ready to play?",
+                                ? "Something went wrong\nTry again"
+                                : "Are you ready to play?",
                         style: const TextStyle(
                           fontFamily: Constants.fontFamily,
                           fontSize: 20,
@@ -409,39 +461,39 @@ class _HangmanPageState extends State<HangmanPage> {
                     isLoading
                         ? const SpinKitSpinningLines(color: Colors.black)
                         : ElevatedButton(
-                      onPressed: () {
-                        if (error) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                              const HangManCategoryPage(),
+                            onPressed: () {
+                              if (error) {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const HangManCategoryPage(),
+                                  ),
+                                );
+                              } else {
+                                setState(() {
+                                  readyToStart = false;
+                                });
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: const Size(251, 44),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              side: const BorderSide(
+                                color: Color(0xff3E87FF),
+                                width: 3,
+                              ),
                             ),
-                          );
-                        } else {
-                          setState(() {
-                            readyToStart = false;
-                          });
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(251, 44),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        side: const BorderSide(
-                          color: Color(0xff3E87FF),
-                          width: 3,
-                        ),
-                      ),
-                      child: Text(
-                        error ? "Return" : "Let's go!",
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontFamily: Constants.fontFamily,
-                          color: Colors.green,
-                        ),
-                      ),
-                    ),
+                            child: Text(
+                              error ? "Return" : "Let's go!",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: Constants.fontFamily,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ),

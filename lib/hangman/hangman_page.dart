@@ -28,43 +28,44 @@ class _HangmanPageState extends State<HangmanPage> {
   bool _isInterstitialAdReady = false;
 
   void _loadInterstitialAd() {
+    log("Add loading");
     InterstitialAd.load(
-      adUnitId: 'ca-app-pub-9502797972174557/3977457230',
+      adUnitId: "ca-app-pub-3940256099942544/1033173712",
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
           _interstitialAd = ad;
           _isInterstitialAdReady = true;
-          print('${ad.runtimeType} loaded.');
+          log('${ad.runtimeType} loaded.');
         },
         onAdFailedToLoad: (LoadAdError error) {
           _interstitialAd = null;
           _isInterstitialAdReady = false;
-          print('InterstitialAd failed to load: $error');
+          log('InterstitialAd failed to load: $error');
         },
       ),
     );
   }
 
-   void _showAd() {
-     if (_interstitialAd == null || !_isInterstitialAdReady) {
-       print('Warning: attempt to show ad before it was loaded.');
-       return;
-     }
-     _interstitialAd?.show();
-     _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
-       onAdDismissedFullScreenContent: (InterstitialAd ad) {
-         print('${ad.runtimeType} dismissed.');
-         ad.dispose();
-         _loadInterstitialAd();
-       },
-       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-         print('${ad.runtimeType} failed to show with error $error.');
-         ad.dispose();
-         _loadInterstitialAd();
-       },
-     );
-   }
+  void _showAd() {
+    if (_interstitialAd == null || !_isInterstitialAdReady) {
+      log('Warning: attempt to show ad before it was loaded.');
+      return;
+    }
+    _interstitialAd?.show();
+    _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        log('${ad.runtimeType} dismissed.');
+        ad.dispose();
+        _loadInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        log('${ad.runtimeType} failed to show with error $error.');
+        ad.dispose();
+        _loadInterstitialAd();
+      },
+    );
+  }
 
   Widget keyboardWidget(
       String guessedWord, Function isGameOver, Function setStateFunction) {
@@ -156,7 +157,6 @@ class _HangmanPageState extends State<HangmanPage> {
     super.initState();
     setState(() {});
     _loadInterstitialAd();
-
   }
 
   @override
@@ -164,7 +164,6 @@ class _HangmanPageState extends State<HangmanPage> {
     timerKey.currentState?.dispose();
     Game.selectedChar.clear();
     Game.gameTries = 0;
-    super.dispose();
     _interstitialAd?.dispose();
     super.dispose();
   }
@@ -318,8 +317,10 @@ class _HangmanPageState extends State<HangmanPage> {
                           if (currHints < 3) {
                             _showAd();
                             if (_isInterstitialAdReady) {
-                              _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
-                                onAdDismissedFullScreenContent: (InterstitialAd ad) {
+                              _interstitialAd?.fullScreenContentCallback =
+                                  FullScreenContentCallback(
+                                onAdDismissedFullScreenContent:
+                                    (InterstitialAd ad) {
                                   // Update the hint display only after the ad is dismissed.
                                   setState(() {
                                     showHint = true;

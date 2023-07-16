@@ -6,10 +6,8 @@ Two-in-one game application that combines classic games Hangman and TextTwist. T
 ## Demo
 
 Hangman Gameplay:
-
 <img src="lib/gifs/untitled.gif" width=216 height="444"/> 
 TextTwist Gameplay:
-
 <img src="lib/gifs/texttwist.gif" width="216" height="444"/> 
 
 

@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dart_openai/dart_openai.dart';
-import 'package:hangman_and_texttwist/api_key.dart';
-import 'package:http/http.dart' as http;
+import '../env/env.dart';
 
 Future<List> hangmanApiCall(final String prompt) async {
-  OpenAI.apiKey = apikey;
+  OpenAI.apiKey = Env.key;
   try {
     OpenAIChatCompletionModel completion = await OpenAI.instance.chat.create(
       model: "gpt-3.5-turbo",
@@ -24,42 +23,5 @@ Future<List> hangmanApiCall(final String prompt) async {
     log(e.message);
     log(e.statusCode.toString());
     rethrow;
-  }
-}
-
-class APIService {
-  static Future<Map> getMessage(final String prompt) async {
-    try {
-      String url = "https://api.openai.com/v1/chat/completions";
-      String openAIkey = "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";
-      var response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer $openAIkey',
-          'Content-Type': 'application/json'
-        },
-        body: jsonEncode(
-          {
-            "model": "gpt-3.5-turbo",
-            "messages": [
-              {"role": "system", "content": prompt},
-              // {"role": "user", "content": prompt},
-            ]
-          },
-        ),
-      );
-
-      Map jsonResponse = jsonDecode(response.body);
-
-      String content = jsonResponse['choices'].length > 0
-          ? jsonResponse['choices'][0]['message']['content'].toString()
-          : '';
-
-      Map contentResponse = jsonDecode(content);
-      return contentResponse;
-    } catch (e) {
-      log("Error: $e"); // most likely because of json format sent by api
-      return getMessage(prompt);
-    }
   }
 }

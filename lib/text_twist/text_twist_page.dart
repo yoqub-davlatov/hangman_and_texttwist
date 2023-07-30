@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hangman_and_texttwist/text_twist/widgets/category_widget.dart';
-import 'package:hangman_and_texttwist/text_twist/widgets/restart_widget.dart';
+import '../text_twist/widgets/category_widget.dart';
+import '../text_twist/widgets/restart_widget.dart';
 import '../category_page/category_settings.dart';
 import '../hangman/UI/widget/TimerWidget.dart';
 import '../hangman/UI/widget/hint_widget.dart';
